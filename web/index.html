@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallatin Continuity — Water Resource Management Map</title>
+    <meta name="description" content="Interactive map of water resource management continuity in the Gallatin watershed. Explore overlapping governance, zoning, and natural systems.">
+
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+
+    <!-- Fonts: Freight Display for headings, Source Sans for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ===== WELCOME OVERLAY ===== -->
+    <div id="welcome-overlay" class="welcome-overlay">
+        <div class="welcome-card">
+            <img src="assets/gwc-logo.png" alt="Gallatin Watershed Council" class="welcome-logo">
+            <h1>Water Resource<br>Management Continuity</h1>
+            <p class="welcome-tagline">
+                Explore how governance, zoning, and planning intersect with the
+                waterways of the Gallatin — from forested headwaters to the urban core.
+            </p>
+            <div class="welcome-meta">
+                <span>Bozeman Creek Corridor</span>
+                <span class="welcome-dot">·</span>
+                <span>Lower Gallatin Watershed</span>
+            </div>
+            <button id="welcome-enter" class="welcome-btn">
+                Start Exploring
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="welcome-credits">
+                Built by <a href="https://itogeo.com" target="_blank">Ito Geospatial</a>
+                for the <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">Gallatin Watershed Council</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== HEADER BAR ===== -->
+    <header id="header" class="header">
+        <div class="header-left">
+            <img src="assets/gwc-logo.png" alt="GWC" class="header-logo">
+            <div class="header-title">
+                <h1>Gallatin Continuity</h1>
+                <span class="header-subtitle">Water Resource Management Map</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button id="btn-about" class="header-btn" title="About this map">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M9 8v5M9 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <a href="https://www.gallatinwatershedcouncil.org/" target="_blank" class="header-btn" title="Gallatin Watershed Council">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M7 15l-4-4m0 0l4-4m-4 4h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(180 9 9)"/>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===== MAIN LAYOUT ===== -->
+    <div id="app" class="app-layout">
+
+        <!-- LEFT PANEL: Layer Controls -->
+        <aside id="panel" class="panel">
+            <div class="panel-scroll">
+
+                <!-- Search / Filter -->
+                <div class="panel-search">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" id="layer-search" placeholder="Search layers..." autocomplete="off">
+                </div>
+
+                <!-- Layer Categories -->
+                <div id="layer-categories" class="layer-categories">
+                    <!-- Populated by app.js from config.js -->
+                </div>
+
+            </div>
+
+            <!-- Panel Toggle (mobile) -->
+            <button id="panel-toggle" class="panel-toggle" title="Toggle panel">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </aside>
+
+        <!-- MAP -->
+        <main id="map-container" class="map-container">
+            <div id="map" class="map"></div>
+
+            <!-- Map Controls (custom positioned) -->
+            <div class="map-controls">
+                <button id="btn-zoom-in" class="map-ctrl-btn" title="Zoom in">+</button>
+                <button id="btn-zoom-out" class="map-ctrl-btn" title="Zoom out">−</button>
+                <button id="btn-reset-view" class="map-ctrl-btn" title="Reset view">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 8a6 6 0 1011.3-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M14 2v3.5h-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Location Query Info Panel (appears on click) -->
+            <div id="query-panel" class="query-panel hidden">
+                <div class="query-header">
+                    <h3>Location Details</h3>
+                    <button id="query-close" class="query-close">&times;</button>
+                </div>
+                <div id="query-content" class="query-content">
+                    <!-- Populated on map click -->
+                </div>
+            </div>
+
+            <!-- Legend (bottom-left) -->
+            <div id="legend" class="legend hidden">
+                <div class="legend-header">
+                    <h4>Legend</h4>
+                    <button id="legend-close" class="legend-close">&times;</button>
+                </div>
+                <div id="legend-content" class="legend-content">
+                    <!-- Populated dynamically based on active layers -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="js/token.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
