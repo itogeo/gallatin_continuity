@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallatin Continuity — Water Resource Management Map</title>
-    <meta name="description" content="Interactive map of water resource management continuity in the Gallatin watershed. Explore overlapping governance, zoning, and natural systems.">
+    <meta name="description" content="Interactive map exploring how water flows continuously through zones with different rules — from natural headwaters to urban core.">
 
     <!-- Mapbox GL JS -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 
-    <!-- Fonts: Freight Display for headings, Source Sans for body -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,31 +20,9 @@
 </head>
 <body>
 
-    <!-- ===== WELCOME OVERLAY ===== -->
-    <div id="welcome-overlay" class="welcome-overlay">
-        <div class="welcome-card">
-            <img src="assets/gwc-logo.png" alt="Gallatin Watershed Council" class="welcome-logo">
-            <h1>Water Resource<br>Management Continuity</h1>
-            <p class="welcome-tagline">
-                Explore how governance, zoning, and planning intersect with the
-                waterways of the Gallatin — from forested headwaters to the urban core.
-            </p>
-            <div class="welcome-meta">
-                <span>Bozeman Creek Corridor</span>
-                <span class="welcome-dot">·</span>
-                <span>Lower Gallatin Watershed</span>
-            </div>
-            <button id="welcome-enter" class="welcome-btn">
-                Start Exploring
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-            <div class="welcome-credits">
-                Built by <a href="https://itogeo.com" target="_blank">Ito Geospatial</a>
-                for the <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">Gallatin Watershed Council</a>
-            </div>
-        </div>
+    <!-- Zone Labels (positioned on map via JS) -->
+    <div id="zone-labels" class="zone-labels">
+        <!-- Populated dynamically -->
     </div>
 
     <!-- ===== HEADER BAR ===== -->
@@ -57,6 +35,12 @@
             </div>
         </div>
         <div class="header-right">
+            <button id="btn-story" class="header-btn header-btn-text" title="View the story">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 3h12M2 8h8M2 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Story
+            </button>
             <button id="btn-about" class="header-btn" title="About this map">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <circle cx="9" cy="9" r="8" stroke="currentColor" stroke-width="1.5"/>
@@ -74,28 +58,17 @@
     <!-- ===== MAIN LAYOUT ===== -->
     <div id="app" class="app-layout">
 
-        <!-- LEFT PANEL: Layer Controls -->
-        <aside id="panel" class="panel">
+        <!-- LEFT PANEL: Compact Layer Controls -->
+        <aside id="panel" class="panel panel-compact collapsed">
             <div class="panel-scroll">
-
-                <!-- Search / Filter -->
-                <div class="panel-search">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                    <input type="text" id="layer-search" placeholder="Search layers..." autocomplete="off">
-                </div>
-
                 <!-- Layer Categories -->
                 <div id="layer-categories" class="layer-categories">
                     <!-- Populated by app.js from config.js -->
                 </div>
-
             </div>
 
-            <!-- Panel Toggle (mobile) -->
-            <button id="panel-toggle" class="panel-toggle" title="Toggle panel">
+            <!-- Panel Toggle -->
+            <button id="panel-toggle" class="panel-toggle" title="Toggle layers">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -106,7 +79,7 @@
         <main id="map-container" class="map-container">
             <div id="map" class="map"></div>
 
-            <!-- Map Controls (custom positioned) -->
+            <!-- Map Controls -->
             <div class="map-controls">
                 <button id="btn-zoom-in" class="map-ctrl-btn" title="Zoom in">+</button>
                 <button id="btn-zoom-out" class="map-ctrl-btn" title="Zoom out">−</button>
@@ -118,7 +91,7 @@
                 </button>
             </div>
 
-            <!-- Location Query Info Panel (appears on click) -->
+            <!-- Location Query Info Panel -->
             <div id="query-panel" class="query-panel hidden">
                 <div class="query-header">
                     <h3>Location Details</h3>
@@ -129,14 +102,65 @@
                 </div>
             </div>
 
-            <!-- Legend (bottom-left) -->
+            <!-- Story Panel (always visible on right) -->
+            <div id="story-panel" class="story-panel">
+                <div class="story-header">
+                    <img src="assets/gwc-logo.png" alt="GWC" class="story-logo">
+                    <div class="story-header-text">
+                        <h3 id="story-title">Bozeman Creek</h3>
+                        <span class="story-tagline">Water Flows Continuously</span>
+                    </div>
+                </div>
+                <div id="story-content" class="story-content">
+                    <!-- Story content loaded dynamically -->
+                </div>
+                <div class="story-nav">
+                    <button id="story-prev" class="story-nav-btn" disabled>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <span id="story-progress">1 / 6</span>
+                    <button id="story-next" class="story-nav-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Legend -->
             <div id="legend" class="legend hidden">
                 <div class="legend-header">
                     <h4>Legend</h4>
                     <button id="legend-close" class="legend-close">&times;</button>
                 </div>
                 <div id="legend-content" class="legend-content">
-                    <!-- Populated dynamically based on active layers -->
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Transect Slider (bottom) - follows Bozeman Creek -->
+            <div id="transect-slider" class="transect-slider">
+                <div class="transect-slider-track">
+                    <div class="transect-zone-segment" data-index="0" data-zone="natural" style="background: #1e4d2b;">
+                        <span class="zone-label">Natural</span>
+                    </div>
+                    <div class="transect-zone-segment" data-index="1" data-zone="rural" style="background: #2d6a4f;">
+                        <span class="zone-label">Rural</span>
+                    </div>
+                    <div class="transect-zone-segment" data-index="2" data-zone="suburban" style="background: #52b788;">
+                        <span class="zone-label">Suburban</span>
+                    </div>
+                    <div class="transect-zone-segment" data-index="3" data-zone="core" style="background: #e76f51;">
+                        <span class="zone-label">Urban Core</span>
+                    </div>
+                    <div class="transect-slider-thumb" id="transect-thumb"></div>
+                </div>
+                <div class="transect-endpoints">
+                    <span>🏔️ Hyalite</span>
+                    <span id="transect-label" class="transect-current-label">Follow Bozeman Creek</span>
+                    <span>Downtown 🏢</span>
                 </div>
             </div>
         </main>

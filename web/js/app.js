@@ -14,8 +14,237 @@
         activeLayers: new Set(),
         loadedSources: new Set(),
         panelOpen: true,
-        currentPopup: null
+        currentPopup: null,
+        storyIndex: 0,
+        storyOpen: false
     };
+
+
+    // ---- Story Content with layer connections and policy visualization ----
+    const STORY_CHAPTERS = [
+        {
+            title: "The Continuity Challenge",
+            zone: null,
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'floodplains'],
+            content: `
+                <h4>One Creek, Many Rules</h4>
+                <p>Bozeman Creek flows 14 miles from the Hyalite-Porcupine-Buffalo Horn Wilderness to its confluence with the East Gallatin River.</p>
+                <p>Along its journey, the creek passes through <strong>four distinct governance zones</strong> — each with different setback requirements and management approaches.</p>
+                <div class="highlight-box">
+                    <strong>The challenge:</strong> Water flows continuously, but our rules change at every boundary line.
+                </div>
+                <p>This map reveals how policy visually affects the landscape — and where opportunities exist to create continuity.</p>
+            `
+        },
+        {
+            title: "Hyalite Headwaters",
+            zone: "natural",
+            flyTo: { center: [-111.05, 45.42], zoom: 11 },
+            layers: ['gallatin-streams', 'public-lands', 'hyalite-zoning', 'setback-proposed-300'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon natural">🏔️</div>
+                    <div>
+                        <span class="zone-tag natural">Natural Zone</span>
+                        <h4>Hyalite/Mystic Watershed</h4>
+                    </div>
+                </div>
+                <p>The creek begins in the <strong>Custer Gallatin National Forest</strong>, protected by federal wilderness designations.</p>
+
+                <div class="policy-box natural">
+                    <h5>Hyalite/Mystic Integrated Water Resources Plan</h5>
+                    <p>Draft Water Supply Screening Criteria emphasizes <strong>Watershed Resiliency and Ecosystem Services</strong>:</p>
+                    <ul>
+                        <li>Flow regulation & infiltration</li>
+                        <li>Groundwater recharge</li>
+                        <li>Climate adaptation capacity</li>
+                    </ul>
+                </div>
+
+                <div class="setback-comparison">
+                    <div class="setback-item proposed">
+                        <span class="setback-value">300ft</span>
+                        <span class="setback-label">Proposed Buffer</span>
+                    </div>
+                    <div class="setback-item">
+                        <span class="setback-value">No Dev</span>
+                        <span class="setback-label">Federal Policy</span>
+                    </div>
+                </div>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #1e4d2b"></span> Public Lands
+                    <span class="layer-dot" style="background: #4caf50"></span> 300ft Proposed
+                </div>
+            `
+        },
+        {
+            title: "County Jurisdiction",
+            zone: "rural",
+            flyTo: { center: [-111.00, 45.58], zoom: 12 },
+            layers: ['gallatin-streams', 'bozeman-donut', 'hyalite-zoning', 'setback-county-150', 'setback-proposed-300'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon rural">🌲</div>
+                    <div>
+                        <span class="zone-tag rural">Rural Zone</span>
+                        <h4>Gallatin County Planning</h4>
+                    </div>
+                </div>
+
+                <div class="policy-box county">
+                    <h5>Current County Regulations</h5>
+                    <p><strong>Subdivision Regulations:</strong> 150ft setback from watercourses</p>
+                    <p>Applies to Bozeman Area Donut & Hyalite District</p>
+                </div>
+
+                <div class="setback-comparison">
+                    <div class="setback-item current">
+                        <span class="setback-value">150ft</span>
+                        <span class="setback-label">Current</span>
+                    </div>
+                    <div class="setback-item proposed">
+                        <span class="setback-value">300ft</span>
+                        <span class="setback-label">Proposed</span>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Zoning Reform Underway:</strong> County considering 300ft structure / 150ft disturbance setbacks aligned with Future Land Use Map.
+                </div>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #8d6e63"></span> Bozeman Donut
+                    <span class="layer-dot" style="background: #ff9800"></span> 150ft Current
+                    <span class="layer-dot" style="background: #4caf50"></span> 300ft Proposed
+                </div>
+            `
+        },
+        {
+            title: "Bozeman Creek Vision",
+            zone: "suburban",
+            flyTo: { center: [-111.035, 45.67], zoom: 14 },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-parks', 'floodplains', 'setback-city-75'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon suburban">🏡</div>
+                    <div>
+                        <span class="zone-tag suburban">City Zone</span>
+                        <h4>Bozeman Creek Vision Plan</h4>
+                    </div>
+                </div>
+
+                <div class="policy-box city">
+                    <h5>UDC Watercourse Setbacks</h5>
+                    <p><strong>75ft setback</strong> from watercourses</p>
+                    <p><strong>45ft native vegetation</strong> required</p>
+                    <p><em>Scope: Downstream of downtown core</em></p>
+                </div>
+
+                <h4 style="margin-top: 16px;">Vision Plan Goals:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>Flood Mitigation</strong> — Reduce 100-year flood damage</li>
+                    <li><strong>Water Quality</strong> — Filter sediment and nutrients</li>
+                    <li><strong>Ecological Restoration</strong> — Reconnect habitat corridors</li>
+                </ul>
+
+                <div class="setback-comparison">
+                    <div class="setback-item city">
+                        <span class="setback-value">75ft</span>
+                        <span class="setback-label">City Setback</span>
+                    </div>
+                    <div class="setback-item">
+                        <span class="setback-value">45ft</span>
+                        <span class="setback-label">Native Veg</span>
+                    </div>
+                </div>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #e91e63"></span> 75ft City Setback
+                    <span class="layer-dot" style="background: #66bb6a"></span> Parks
+                    <span class="layer-dot" style="background: #7c4dff"></span> Flood Zones
+                </div>
+            `
+        },
+        {
+            title: "Urban Core",
+            zone: "core",
+            flyTo: { center: [-111.038, 45.679], zoom: 16 },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-zoning', 'bozeman-parks', 'setback-city-75'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon core">🏢</div>
+                    <div>
+                        <span class="zone-tag core">Urban Core</span>
+                        <h4>Downtown Bozeman</h4>
+                    </div>
+                </div>
+
+                <p>At the heart of Bozeman, the creek is most constrained — historic development patterns have encroached on the riparian corridor.</p>
+
+                <div class="culvert-indicator">
+                    <div class="culvert-icon">⬇️ Underground</div>
+                    <span>Sections flow through culverts beneath streets and parking lots.</span>
+                </div>
+
+                <div class="policy-box conflict">
+                    <h5>Policy vs. Reality</h5>
+                    <p>While 75ft setbacks apply, existing development predates these requirements. Limited space for restoration.</p>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Daylighting Opportunity:</strong> Restoring underground sections could reduce flooding and reconnect the watershed.
+                </div>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #e91e63"></span> 75ft Setback
+                    <span class="layer-dot" style="background: #81c784"></span> Zoning
+                    <div class="culvert-legend-item">
+                        <span class="culvert-dash"></span> Underground
+                    </div>
+                </div>
+            `
+        },
+        {
+            title: "Toward Continuity",
+            zone: null,
+            flyTo: { center: CONFIG.mapbox.center, zoom: CONFIG.mapbox.zoom },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'setback-city-75', 'setback-county-150', 'setback-proposed-300'],
+            content: `
+                <h4>Visualizing Policy Change</h4>
+                <p>This map shows how <strong>different setback policies</strong> would affect the landscape around Bozeman Creek.</p>
+
+                <div class="setback-comparison triple">
+                    <div class="setback-item city">
+                        <span class="setback-value">75ft</span>
+                        <span class="setback-label">City</span>
+                    </div>
+                    <div class="setback-item current">
+                        <span class="setback-value">150ft</span>
+                        <span class="setback-label">County</span>
+                    </div>
+                    <div class="setback-item proposed">
+                        <span class="setback-value">300ft</span>
+                        <span class="setback-label">Proposed</span>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 16px;">The Path Forward:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>Setback Harmonization</strong> — Consistent protections across jurisdictions</li>
+                    <li><strong>County Zoning Reform</strong> — 300ft/150ft in Natural Subsection</li>
+                    <li><strong>Vision Plan Implementation</strong> — Greenway from source to confluence</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <strong>Toggle the setback layers</strong> in the left panel to see how policy shapes the landscape.
+                </div>
+            `
+        }
+    ];
+
+    // Track layers before story mode
+    let preStoryLayers = new Set();
 
 
     // ================================================================
@@ -23,36 +252,14 @@
     // ================================================================
 
     function init() {
-        setupWelcome();
         setupMap();
         buildPanel();
         setupControls();
+        setupStoryPanel();
+        setupTransectIndicator();
     }
 
 
-    // ================================================================
-    // WELCOME OVERLAY
-    // ================================================================
-
-    function setupWelcome() {
-        const overlay = document.getElementById('welcome-overlay');
-        const enterBtn = document.getElementById('welcome-enter');
-
-        enterBtn.addEventListener('click', () => {
-            overlay.classList.add('fade-out');
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                if (state.map) {
-                    state.map.flyTo({
-                        center: CONFIG.mapbox.center,
-                        zoom: CONFIG.mapbox.zoom,
-                        duration: 2000,
-                        essential: true
-                    });
-                }
-            }, 400);
-        });
-    }
 
 
     // ================================================================
@@ -80,10 +287,17 @@
             'bottom-right'
         );
 
-        // When map loads, activate default-on layers
+        // When map loads, activate default-on layers and special features
         state.map.on('load', () => {
             console.log('Map loaded');
             activateDefaultLayers();
+            addZoneLabels();         // Zone labels along creek
+            addBozemanCreekHighlight(); // Creek on TOP (last) - THE CREEK IS THE TRANSECT
+
+            // Auto-show the story panel
+            setTimeout(() => {
+                showStoryPanel();
+            }, 500);
         });
 
         // Click handler for querying layers
@@ -110,11 +324,13 @@
             container.appendChild(catEl);
         });
 
-        // Layer search
+        // Layer search (optional)
         const searchInput = document.getElementById('layer-search');
-        searchInput.addEventListener('input', (e) => {
-            filterLayers(e.target.value.toLowerCase().trim());
-        });
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                filterLayers(e.target.value.toLowerCase().trim());
+            });
+        }
     }
 
     function createCategoryElement(category) {
@@ -271,42 +487,127 @@
 
         // Add fill/line/circle layer based on type
         try {
+            const layerDef = {
+                id: layerId,
+                type: layer.type,
+                source: sourceId,
+                paint: layer.style
+            };
+
+            // Apply filter if defined
+            if (layer.filter) {
+                layerDef.filter = layer.filter;
+            }
+
             if (layer.type === 'fill') {
-                state.map.addLayer({
-                    id: layerId,
-                    type: 'fill',
-                    source: sourceId,
-                    paint: layer.style
-                });
+                state.map.addLayer(layerDef);
 
                 if (layer.outlineStyle) {
-                    state.map.addLayer({
+                    const outlineDef = {
                         id: `${layerId}-outline`,
                         type: 'line',
                         source: sourceId,
                         paint: layer.outlineStyle
-                    });
+                    };
+                    if (layer.filter) {
+                        outlineDef.filter = layer.filter;
+                    }
+                    state.map.addLayer(outlineDef);
                 }
             } else if (layer.type === 'line') {
-                state.map.addLayer({
-                    id: layerId,
-                    type: 'line',
-                    source: sourceId,
-                    paint: layer.style
-                });
+                state.map.addLayer(layerDef);
             } else if (layer.type === 'circle') {
-                state.map.addLayer({
-                    id: layerId,
-                    type: 'circle',
-                    source: sourceId,
-                    paint: layer.style
-                });
+                state.map.addLayer(layerDef);
+            } else if (layer.type === 'setback') {
+                // Special setback buffer visualization - renders as wide line around Bozeman Creek
+                addSetbackLayer(layer, sourceId, layerId);
             }
 
             state.activeLayers.add(layer.id);
         } catch (err) {
             console.warn(`Could not add layer ${layer.id}:`, err.message);
         }
+    }
+
+    // Add setback buffer visualization layer
+    function addSetbackLayer(layer, sourceId, layerId) {
+        if (!state.map) return;
+
+        // Convert feet to approximate pixel width based on zoom
+        // At zoom 14: ~1 pixel ≈ 9.5m, so 75ft(23m) ≈ 2.4px
+        // We use interpolation to scale with zoom
+        const ftToPixelBase = layer.setbackDistance / 30; // Base scaling factor
+
+        // Filter for Bozeman Creek only
+        const creekFilter = ['any',
+            ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+            ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+        ];
+
+        // Add the setback buffer as a wide line
+        state.map.addLayer({
+            id: layerId,
+            type: 'line',
+            source: sourceId,
+            filter: creekFilter,
+            paint: {
+                'line-color': layer.style['line-color'],
+                'line-width': [
+                    'interpolate', ['exponential', 2], ['zoom'],
+                    10, ftToPixelBase * 0.3,
+                    12, ftToPixelBase * 0.8,
+                    14, ftToPixelBase * 2,
+                    16, ftToPixelBase * 6,
+                    18, ftToPixelBase * 20
+                ],
+                'line-opacity': layer.style['line-opacity'] || 0.2,
+                'line-blur': 1
+            }
+        }, 'bozeman-creek-glow'); // Add below the creek highlight
+
+        // Add dashed outline for the setback boundary
+        state.map.addLayer({
+            id: `${layerId}-outline`,
+            type: 'line',
+            source: sourceId,
+            filter: creekFilter,
+            paint: {
+                'line-color': layer.style['line-color'],
+                'line-width': 2,
+                'line-opacity': 0.6,
+                'line-dasharray': [4, 2],
+                'line-offset': [
+                    'interpolate', ['exponential', 2], ['zoom'],
+                    10, ftToPixelBase * 0.15,
+                    12, ftToPixelBase * 0.4,
+                    14, ftToPixelBase * 1,
+                    16, ftToPixelBase * 3,
+                    18, ftToPixelBase * 10
+                ]
+            }
+        }, 'bozeman-creek-glow');
+
+        // Add label for the setback
+        state.map.addLayer({
+            id: `${layerId}-label`,
+            type: 'symbol',
+            source: sourceId,
+            filter: creekFilter,
+            layout: {
+                'symbol-placement': 'line',
+                'text-field': `${layer.setbackDistance}ft setback`,
+                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+                'text-size': 10,
+                'text-max-angle': 30,
+                'text-offset': [0, -1.5]
+            },
+            paint: {
+                'text-color': layer.style['line-color'],
+                'text-halo-color': 'rgba(255,255,255,0.9)',
+                'text-halo-width': 2
+            },
+            minzoom: 13
+        }, 'bozeman-creek-glow');
     }
 
     function removeLayer(layer) {
@@ -320,6 +621,9 @@
             }
             if (state.map.getLayer(`${layerId}-outline`)) {
                 state.map.removeLayer(`${layerId}-outline`);
+            }
+            if (state.map.getLayer(`${layerId}-label`)) {
+                state.map.removeLayer(`${layerId}-label`);
             }
         } catch (err) {
             console.warn(`Could not remove layer ${layer.id}:`, err.message);
@@ -372,9 +676,57 @@
 
         if (features.length > 0) {
             showDetailPanel(features, lngLat);
+            detectZoneFromFeatures(features, lngLat);
         } else {
             hideQueryPanel();
+            updateTransectFromLocation(lngLat);
         }
+    }
+
+    function detectZoneFromFeatures(features, lngLat) {
+        // Try to detect zone from zoning features
+        for (const feature of features) {
+            const props = feature.properties;
+
+            // Check for city zoning
+            if (props.ZONING || props.Zoning || props.ZONE) {
+                const zoning = (props.ZONING || props.Zoning || props.ZONE || '').toUpperCase();
+
+                // City of Bozeman zoning codes
+                if (zoning.includes('B-3') || zoning.includes('B-2A') || zoning.includes('NEHMU')) {
+                    highlightTransectZone('core');
+                    return;
+                } else if (zoning.includes('B-2') || zoning.includes('B-1') || zoning.includes('UMU')) {
+                    highlightTransectZone('center');
+                    return;
+                } else if (zoning.includes('R-4') || zoning.includes('R-3') || zoning.includes('R-O')) {
+                    highlightTransectZone('general');
+                    return;
+                } else if (zoning.includes('R-2') || zoning.includes('R-1') || zoning.includes('RS')) {
+                    highlightTransectZone('suburban');
+                    return;
+                } else if (zoning.includes('RR') || zoning.includes('A')) {
+                    highlightTransectZone('rural');
+                    return;
+                }
+            }
+
+            // Check for county planning districts
+            if (props.DISTRICT_N || props.District) {
+                const district = (props.DISTRICT_N || props.District || '').toUpperCase();
+
+                if (district.includes('HYALITE')) {
+                    highlightTransectZone('natural');
+                    return;
+                } else if (district.includes('BOZEMAN')) {
+                    highlightTransectZone('suburban');
+                    return;
+                }
+            }
+        }
+
+        // Fallback to location-based detection
+        updateTransectFromLocation(lngLat);
     }
 
     function showDetailPanel(features, lngLat) {
@@ -667,19 +1019,547 @@
             document.getElementById('legend').classList.add('hidden');
         });
 
-        // About button
+        // About button - show info modal
         document.getElementById('btn-about').addEventListener('click', () => {
-            const overlay = document.getElementById('welcome-overlay');
-            overlay.style.display = 'flex';
-            overlay.classList.remove('fade-out');
+            showAboutInfo();
         });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 hideQueryPanel();
+                hideStoryPanel();
             }
         });
+
+        // Story button
+        document.getElementById('btn-story').addEventListener('click', () => {
+            toggleStoryPanel();
+        });
+    }
+
+
+    // ================================================================
+    // STORY PANEL
+    // ================================================================
+
+    function setupStoryPanel() {
+        // Navigation buttons
+        document.getElementById('story-prev').addEventListener('click', () => {
+            if (state.storyIndex > 0) {
+                state.storyIndex--;
+                renderStoryChapter();
+            }
+        });
+
+        document.getElementById('story-next').addEventListener('click', () => {
+            if (state.storyIndex < STORY_CHAPTERS.length - 1) {
+                state.storyIndex++;
+                renderStoryChapter();
+            }
+        });
+    }
+
+    function toggleStoryPanel() {
+        // Story panel is always visible - this just resets to beginning
+        state.storyIndex = 0;
+        renderStoryChapter();
+    }
+
+    function showStoryPanel() {
+        state.storyOpen = true;
+        state.storyIndex = 0;
+
+        // Save current layer state
+        preStoryLayers = new Set(state.activeLayers);
+
+        renderStoryChapter();
+    }
+
+    function hideStoryPanel() {
+        // Story panel is always visible now - this just clears the highlight
+        clearTransectHighlight();
+    }
+
+    function restorePreStoryLayers() {
+        // Turn off all current layers
+        const currentLayers = new Set(state.activeLayers);
+        currentLayers.forEach(layerId => {
+            const config = getLayerConfig(layerId);
+            if (config) {
+                removeLayer(config.layer);
+                updateLayerCheckbox(layerId, false);
+            }
+        });
+
+        // Turn on pre-story layers
+        preStoryLayers.forEach(layerId => {
+            const config = getLayerConfig(layerId);
+            if (config) {
+                addLayer(config.layer);
+                updateLayerCheckbox(layerId, true);
+            }
+        });
+
+        updateLegend();
+    }
+
+    function updateLayerCheckbox(layerId, checked) {
+        const item = document.querySelector(`.layer-item[data-layer-id="${layerId}"]`);
+        if (item) {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox) checkbox.checked = checked;
+        }
+    }
+
+    function setStoryLayers(layerIds) {
+        if (!layerIds || !state.map) return;
+
+        // Get all layer configs
+        const allLayers = [];
+        CONFIG.categories.forEach(cat => {
+            cat.layers.forEach(layer => allLayers.push(layer));
+        });
+
+        // Turn off layers not in the story chapter
+        const currentLayers = new Set(state.activeLayers);
+        currentLayers.forEach(layerId => {
+            if (!layerIds.includes(layerId)) {
+                const config = getLayerConfig(layerId);
+                if (config) {
+                    removeLayer(config.layer);
+                    updateLayerCheckbox(layerId, false);
+                }
+            }
+        });
+
+        // Turn on story layers
+        layerIds.forEach(layerId => {
+            const config = getLayerConfig(layerId);
+            if (config && !state.activeLayers.has(layerId)) {
+                addLayer(config.layer);
+                updateLayerCheckbox(layerId, true);
+            }
+        });
+
+        updateLegend();
+    }
+
+    function renderStoryChapter() {
+        const chapter = STORY_CHAPTERS[state.storyIndex];
+
+        // Update title
+        document.getElementById('story-title').textContent = chapter.title;
+
+        // Update content
+        document.getElementById('story-content').innerHTML = chapter.content;
+
+        // Update progress
+        document.getElementById('story-progress').textContent =
+            `${state.storyIndex + 1} / ${STORY_CHAPTERS.length}`;
+
+        // Update navigation buttons
+        document.getElementById('story-prev').disabled = state.storyIndex === 0;
+        document.getElementById('story-next').disabled = state.storyIndex === STORY_CHAPTERS.length - 1;
+
+        // Update transect slider position
+        updateTransectSlider(state.storyIndex);
+
+        // Set the story layers
+        if (chapter.layers) {
+            setStoryLayers(chapter.layers);
+        }
+
+        // Fly to location if specified
+        if (chapter.flyTo && state.map) {
+            state.map.flyTo({
+                ...chapter.flyTo,
+                duration: 2000,
+                essential: true
+            });
+        }
+
+        // Highlight transect zone
+        if (chapter.zone) {
+            highlightTransectZone(chapter.zone);
+        } else {
+            clearTransectHighlight();
+        }
+    }
+
+
+    // ================================================================
+    // TRANSECT SLIDER
+    // ================================================================
+
+    function setupTransectIndicator() {
+        // The transect zone segments
+        const segments = document.querySelectorAll('.transect-zone-segment');
+
+        segments.forEach(segment => {
+            segment.addEventListener('click', () => {
+                const index = parseInt(segment.dataset.index);
+                // Map segment index to story chapter (skip intro chapter 0)
+                const chapterIndex = index + 1;
+                if (chapterIndex < STORY_CHAPTERS.length) {
+                    state.storyIndex = chapterIndex;
+                    if (!state.storyOpen) {
+                        showStoryPanel();
+                    }
+                    renderStoryChapter();
+                }
+            });
+        });
+    }
+
+    function updateTransectSlider(chapterIndex) {
+        const segments = document.querySelectorAll('.transect-zone-segment');
+        const thumb = document.getElementById('transect-thumb');
+        const label = document.getElementById('transect-label');
+
+        // Clear all active states
+        segments.forEach(s => s.classList.remove('active'));
+
+        // For intro (0) and conclusion (last), don't highlight a specific segment
+        if (chapterIndex === 0) {
+            label.textContent = 'Click a zone to explore';
+            thumb.style.opacity = '0';
+            return;
+        }
+
+        if (chapterIndex >= STORY_CHAPTERS.length - 1) {
+            label.textContent = 'Explore the map';
+            thumb.style.opacity = '0';
+            return;
+        }
+
+        // Map chapter index to segment (chapter 1 = segment 0, etc)
+        const segmentIndex = chapterIndex - 1;
+        const activeSegment = segments[segmentIndex];
+
+        if (activeSegment) {
+            activeSegment.classList.add('active');
+
+            // Position the thumb
+            const track = document.querySelector('.transect-slider-track');
+            const trackWidth = track.offsetWidth;
+            const segmentWidth = trackWidth / segments.length;
+            const thumbPos = (segmentIndex * segmentWidth) + (segmentWidth / 2) - 3;
+
+            thumb.style.left = `${thumbPos}px`;
+            thumb.style.opacity = '1';
+
+            // Update label
+            const chapter = STORY_CHAPTERS[chapterIndex];
+            label.textContent = chapter.title;
+        }
+    }
+
+    function highlightTransectZone(zoneName) {
+        const segments = document.querySelectorAll('.transect-zone-segment');
+        const label = document.getElementById('transect-label');
+
+        // Map old zone names to new 4-zone system
+        const zoneMapping = {
+            natural: 'natural',
+            rural: 'rural',
+            suburban: 'suburban',
+            general: 'suburban',  // Map to suburban
+            center: 'core',       // Map to core
+            core: 'core'
+        };
+        const mappedZone = zoneMapping[zoneName] || zoneName;
+
+        segments.forEach(segment => {
+            if (segment.dataset.zone === mappedZone) {
+                segment.classList.add('active');
+            } else {
+                segment.classList.remove('active');
+            }
+        });
+
+        // Update label
+        const labelMap = {
+            natural: 'Natural Zone — Hyalite Headwaters',
+            rural: 'Rural Zone — County Jurisdiction',
+            suburban: 'Suburban Zone — City',
+            core: 'Urban Core — Downtown Bozeman'
+        };
+        label.textContent = labelMap[mappedZone] || 'Follow Bozeman Creek';
+    }
+
+    function clearTransectHighlight() {
+        document.querySelectorAll('.transect-zone-segment').forEach(segment => {
+            segment.classList.remove('active');
+        });
+        document.getElementById('transect-label').textContent = 'Click "Story" to explore';
+        const thumb = document.getElementById('transect-thumb');
+        if (thumb) thumb.style.opacity = '0';
+    }
+
+    // Update transect based on map location (follows Bozeman Creek from south to north)
+    function updateTransectFromLocation(lngLat) {
+        const lat = lngLat.lat;
+
+        let zone;
+        if (lat < 45.50) {
+            zone = 'natural';     // Hyalite headwaters area
+        } else if (lat < 45.60) {
+            zone = 'rural';       // County jurisdiction
+        } else if (lat < 45.67) {
+            zone = 'suburban';    // City annexation areas
+        } else {
+            zone = 'core';        // Downtown Bozeman
+        }
+
+        highlightTransectZone(zone);
+    }
+
+
+    // ================================================================
+    // BOZEMAN CREEK HIGHLIGHT - Always on top in bright cyan
+    // ================================================================
+
+    function addBozemanCreekHighlight() {
+        if (!state.map) return;
+
+        // Add Bozeman Creek as a special highlighted layer
+        // Use filter to show only Bozeman Creek from the streams data
+        state.map.addSource('bozeman-creek-source', {
+            type: 'geojson',
+            data: 'data/gallatin_streams.geojson'
+        });
+
+        // Glow effect (wider, semi-transparent)
+        state.map.addLayer({
+            id: 'bozeman-creek-glow',
+            type: 'line',
+            source: 'bozeman-creek-source',
+            filter: ['any',
+                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ],
+            paint: {
+                'line-color': '#00e5ff',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 8, 14, 14, 18, 20],
+                'line-opacity': 0.3,
+                'line-blur': 3
+            }
+        });
+
+        // Main bright cyan line
+        state.map.addLayer({
+            id: 'bozeman-creek-highlight',
+            type: 'line',
+            source: 'bozeman-creek-source',
+            filter: ['any',
+                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ],
+            paint: {
+                'line-color': '#00e5ff',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3, 14, 5, 18, 8],
+                'line-opacity': 1
+            }
+        });
+
+        // Creek label
+        state.map.addLayer({
+            id: 'bozeman-creek-label',
+            type: 'symbol',
+            source: 'bozeman-creek-source',
+            filter: ['any',
+                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ],
+            layout: {
+                'symbol-placement': 'line',
+                'text-field': 'Bozeman Creek',
+                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+                'text-size': 12,
+                'text-max-angle': 30,
+                'text-allow-overlap': false
+            },
+            paint: {
+                'text-color': '#00bcd4',
+                'text-halo-color': 'rgba(0,0,0,0.8)',
+                'text-halo-width': 2
+            },
+            minzoom: 12
+        });
+
+        // Add culvert/underground section overlay (approximate downtown location)
+        addCulvertOverlay();
+    }
+
+    function addCulvertOverlay() {
+        if (!state.map) return;
+
+        // Approximate culvert section coordinates in downtown Bozeman
+        // These are estimated locations where Bozeman Creek goes underground
+        const culvertCoords = [
+            [-111.0395, 45.6795],
+            [-111.0385, 45.6785],
+            [-111.0378, 45.6775]
+        ];
+
+        state.map.addSource('culvert-section-source', {
+            type: 'geojson',
+            data: {
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: culvertCoords
+                }
+            }
+        });
+
+        // Dashed orange line for culvert section
+        state.map.addLayer({
+            id: 'culvert-section',
+            type: 'line',
+            source: 'culvert-section-source',
+            paint: {
+                'line-color': '#ff6d00',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 14, 4, 18, 8],
+                'line-dasharray': [2, 2],
+                'line-opacity': 0.9
+            },
+            minzoom: 14
+        });
+
+        // Label for culvert section
+        state.map.addLayer({
+            id: 'culvert-section-label',
+            type: 'symbol',
+            source: 'culvert-section-source',
+            layout: {
+                'symbol-placement': 'line',
+                'text-field': 'UNDERGROUND',
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+                'text-size': 10,
+                'text-letter-spacing': 0.1,
+                'text-max-angle': 30
+            },
+            paint: {
+                'text-color': '#e65100',
+                'text-halo-color': 'rgba(255,255,255,0.9)',
+                'text-halo-width': 2
+            },
+            minzoom: 15
+        });
+    }
+
+
+    // ================================================================
+    // ZONE LABELS - On-map labels for governance zones
+    // ================================================================
+
+    // Zone labels positioned along Bozeman Creek (to the right of the creek)
+    const ZONE_LABEL_POSITIONS = [
+        { id: 'natural', text: 'NATURAL', coords: [-110.98, 45.42], color: '#1e4d2b' },
+        { id: 'rural', text: 'RURAL', coords: [-110.97, 45.55], color: '#2d6a4f' },
+        { id: 'suburban', text: 'SUBURBAN', coords: [-110.96, 45.64], color: '#52b788' },
+        { id: 'core', text: 'URBAN CORE', coords: [-110.96, 45.69], color: '#e76f51', highlight: true }
+    ];
+
+    function addZoneLabels() {
+        if (!state.map) return;
+
+        // Create GeoJSON for zone labels
+        const zoneLabelData = {
+            type: 'FeatureCollection',
+            features: ZONE_LABEL_POSITIONS.map(zone => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: zone.coords
+                },
+                properties: {
+                    id: zone.id,
+                    text: zone.text,
+                    color: zone.color,
+                    highlight: zone.highlight ? 1 : 0
+                }
+            }))
+        };
+
+        state.map.addSource('zone-labels-source', {
+            type: 'geojson',
+            data: zoneLabelData
+        });
+
+        // Zone label text with halo (like mockup - tan/beige boxes with dark text)
+        state.map.addLayer({
+            id: 'zone-label-text',
+            type: 'symbol',
+            source: 'zone-labels-source',
+            layout: {
+                'text-field': ['get', 'text'],
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+                'text-size': ['case', ['==', ['get', 'highlight'], 1], 14, 12],
+                'text-anchor': 'left',
+                'text-justify': 'left',
+                'text-allow-overlap': true,
+                'text-ignore-placement': true
+            },
+            paint: {
+                'text-color': ['case',
+                    ['==', ['get', 'highlight'], 1], '#6a1b9a',  // Purple for highlighted
+                    '#5d4037'  // Brown for others
+                ],
+                'text-halo-color': ['case',
+                    ['==', ['get', 'highlight'], 1], '#ffeb3b',  // Yellow highlight
+                    '#f5deb3'  // Tan/wheat background
+                ],
+                'text-halo-width': 4,
+                'text-halo-blur': 0
+            }
+        });
+    }
+
+
+    // ================================================================
+    // ABOUT INFO - Modal for about button
+    // ================================================================
+
+    function showAboutInfo() {
+        const panel = document.getElementById('query-panel');
+        const content = document.getElementById('query-content');
+        const header = document.querySelector('#query-panel .query-header h3');
+        header.textContent = 'About Gallatin Continuity';
+
+        content.innerHTML = `
+            <div class="about-info-panel">
+                <div class="about-logo-row">
+                    <img src="assets/gwc-logo.png" alt="GWC" class="about-logo">
+                </div>
+                <h4>Gallatin Continuity</h4>
+                <p>An interactive map exploring how water flows continuously through zones with different rules — from natural headwaters to urban core.</p>
+
+                <h4 style="margin-top: 16px;">The Challenge</h4>
+                <p>Bozeman Creek flows 14 miles through <strong>six distinct governance zones</strong>, each with different setback requirements and regulations.</p>
+
+                <div class="highlight-box">
+                    <strong>Water flows continuously</strong>, but our rules change at every boundary line.
+                </div>
+
+                <h4 style="margin-top: 16px;">Built By</h4>
+                <p>Gallatin Watershed Council<br>
+                <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">www.gallatinwatershedcouncil.org</a></p>
+
+                <div class="detail-actions" style="margin-top: 16px;">
+                    <a href="https://www.gallatinwatershedcouncil.org/" target="_blank" class="detail-action-link">
+                        Visit GWC
+                        <svg viewBox="0 0 16 16" fill="none" width="12" height="12">
+                            <path d="M5 11l6-6M5 5h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        `;
+
+        panel.classList.remove('hidden');
     }
 
 
