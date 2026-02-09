@@ -1332,7 +1332,7 @@
             data: 'data/gallatin_streams.geojson'
         });
 
-        // Outer glow effect (very wide, soft)
+        // Subtle outer glow - soft water blue
         state.map.addLayer({
             id: 'bozeman-creek-outer-glow',
             type: 'line',
@@ -1342,31 +1342,14 @@
                 ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
-                'line-color': '#00ffff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 16, 14, 28, 18, 40],
-                'line-opacity': 0.25,
-                'line-blur': 6
+                'line-color': '#4a90a4',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 12, 18, 20],
+                'line-opacity': 0.15,
+                'line-blur': 4
             }
         });
 
-        // Inner glow effect
-        state.map.addLayer({
-            id: 'bozeman-creek-glow',
-            type: 'line',
-            source: 'bozeman-creek-source',
-            filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
-                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
-            ],
-            paint: {
-                'line-color': '#00e5ff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 18, 18, 26],
-                'line-opacity': 0.4,
-                'line-blur': 3
-            }
-        });
-
-        // Main bright cyan line - THE STAR
+        // Main creek line - deeper blue, prominent but not glaring
         state.map.addLayer({
             id: 'bozeman-creek-highlight',
             type: 'line',
@@ -1376,13 +1359,13 @@
                 ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
-                'line-color': '#00ffff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 7, 18, 12],
-                'line-opacity': 1
+                'line-color': '#2d6a8a',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 2.5, 14, 4, 18, 7],
+                'line-opacity': 0.9
             }
         });
 
-        // White center line for extra pop
+        // Light center line for definition
         state.map.addLayer({
             id: 'bozeman-creek-center',
             type: 'line',
@@ -1392,9 +1375,9 @@
                 ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
-                'line-color': '#ffffff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 14, 2, 18, 3],
-                'line-opacity': 0.6
+                'line-color': '#7ec8e3',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.8, 14, 1.5, 18, 2.5],
+                'line-opacity': 0.7
             }
         });
 
@@ -1409,19 +1392,19 @@
             ],
             layout: {
                 'symbol-placement': 'line',
-                'text-field': 'BOZEMAN CREEK',
-                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
-                'text-size': 14,
-                'text-letter-spacing': 0.1,
+                'text-field': 'Bozeman Creek',
+                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+                'text-size': 12,
+                'text-letter-spacing': 0.05,
                 'text-max-angle': 30,
                 'text-allow-overlap': false
             },
             paint: {
-                'text-color': '#ffffff',
-                'text-halo-color': '#00838f',
-                'text-halo-width': 2.5
+                'text-color': '#1a4a5e',
+                'text-halo-color': 'rgba(255,255,255,0.9)',
+                'text-halo-width': 2
             },
-            minzoom: 11
+            minzoom: 12
         });
 
         // Add culvert/underground section overlay (approximate downtown location)
