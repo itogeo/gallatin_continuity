@@ -456,18 +456,18 @@ const CONFIG = {
                     style: {
                         'fill-color': [
                             'match', ['get', 'LANDUSE'],
-                            'RESIDENTIAL', '#a5d6a7',
-                            'AGRICULTURAL', '#dce775',
-                            'COMMERCIAL', '#ffab91',
-                            'INDUSTRIAL', '#b0bec5',
-                            '#e0e0e0'
+                            'RESIDENTIAL', '#6d9e71',
+                            'AGRICULTURAL', '#a69b3d',
+                            'COMMERCIAL', '#c97a5c',
+                            'INDUSTRIAL', '#7a8a90',
+                            '#8d7a6e'
                         ],
-                        'fill-opacity': 0.35
+                        'fill-opacity': 0.5
                     },
                     outlineStyle: {
-                        'line-color': '#6d4c41',
-                        'line-width': 0.5,
-                        'line-opacity': 0.5
+                        'line-color': '#4a3528',
+                        'line-width': 1.5,
+                        'line-opacity': 0.7
                     },
                     legendColor: '#8d6e63',
                     popup: {

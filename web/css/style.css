@@ -289,6 +289,34 @@ html, body {
     background: var(--gray-100);
 }
 
+/* Ito Geospatial branding */
+.header-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    margin-left: 8px;
+    text-decoration: none;
+    border-left: 1px solid var(--gray-200);
+}
+
+.header-brand-link .built-by {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    font-weight: 400;
+}
+
+.header-brand-link .ito-brand {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--water-deep);
+    transition: color var(--duration-fast);
+}
+
+.header-brand-link:hover .ito-brand {
+    color: var(--forest-mid);
+}
+
 
 /* =================================================================
    APP LAYOUT
@@ -2309,4 +2337,27 @@ html, body {
 .layer-toggle-hint svg {
     width: 14px;
     height: 14px;
+}
+
+/* About section in story panel */
+.about-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.about-section .about-credit {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    text-align: center;
+}
+
+.about-section a {
+    color: var(--water-mid);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.about-section a:hover {
+    text-decoration: underline;
 }

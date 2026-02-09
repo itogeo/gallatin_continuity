@@ -25,7 +25,8 @@
         {
             title: "The Continuity Challenge",
             zone: null,
-            layers: ['gallatin-streams', 'bozeman-city-limits', 'floodplains'],
+            flyTo: { center: [-111.03, 45.60], zoom: 10 },
+            layers: ['gallatin-streams', 'bozeman-city-limits'],
             content: `
                 <h4>One Creek, Many Rules</h4>
                 <p>Bozeman Creek flows 14 miles from the Hyalite-Porcupine-Buffalo Horn Wilderness to its confluence with the East Gallatin River.</p>
@@ -34,12 +35,15 @@
                     <strong>The challenge:</strong> Water flows continuously, but our rules change at every boundary line.
                 </div>
                 <p>This map reveals how policy visually affects the landscape — and where opportunities exist to create continuity.</p>
+                <div class="about-section">
+                    <p class="about-credit">A project of the <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">Gallatin Watershed Council</a></p>
+                </div>
             `
         },
         {
             title: "Hyalite Headwaters",
             zone: "natural",
-            flyTo: { center: [-111.05, 45.42], zoom: 11 },
+            flyTo: { center: [-111.02, 45.48], zoom: 10.5 },
             layers: ['gallatin-streams', 'public-lands', 'hyalite-zoning', 'setback-proposed-300'],
             content: `
                 <div class="zone-heading">
@@ -81,7 +85,7 @@
         {
             title: "County Jurisdiction",
             zone: "rural",
-            flyTo: { center: [-111.00, 45.58], zoom: 12 },
+            flyTo: { center: [-111.02, 45.62], zoom: 11 },
             layers: ['gallatin-streams', 'bozeman-donut', 'hyalite-zoning', 'setback-county-150', 'setback-proposed-300'],
             content: `
                 <div class="zone-heading">
@@ -123,7 +127,7 @@
         {
             title: "Bozeman Creek Vision",
             zone: "suburban",
-            flyTo: { center: [-111.035, 45.67], zoom: 14 },
+            flyTo: { center: [-111.035, 45.67], zoom: 12.5 },
             layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-parks', 'floodplains', 'setback-city-75'],
             content: `
                 <div class="zone-heading">
@@ -169,7 +173,7 @@
         {
             title: "Urban Core",
             zone: "core",
-            flyTo: { center: [-111.038, 45.679], zoom: 16 },
+            flyTo: { center: [-111.038, 45.679], zoom: 14 },
             layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-zoning', 'bozeman-parks', 'setback-city-75'],
             content: `
                 <div class="zone-heading">
@@ -544,6 +548,9 @@
             ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
         ];
 
+        // Determine which layer to insert before (if creek highlight exists)
+        const beforeLayer = state.map.getLayer('bozeman-creek-outer-glow') ? 'bozeman-creek-outer-glow' : undefined;
+
         // Add the setback buffer as a wide line
         state.map.addLayer({
             id: layerId,
@@ -554,16 +561,16 @@
                 'line-color': layer.style['line-color'],
                 'line-width': [
                     'interpolate', ['exponential', 2], ['zoom'],
-                    10, ftToPixelBase * 0.3,
-                    12, ftToPixelBase * 0.8,
-                    14, ftToPixelBase * 2,
-                    16, ftToPixelBase * 6,
-                    18, ftToPixelBase * 20
+                    10, ftToPixelBase * 0.5,
+                    12, ftToPixelBase * 1.2,
+                    14, ftToPixelBase * 3,
+                    16, ftToPixelBase * 8,
+                    18, ftToPixelBase * 25
                 ],
-                'line-opacity': layer.style['line-opacity'] || 0.2,
-                'line-blur': 1
+                'line-opacity': layer.style['line-opacity'] || 0.3,
+                'line-blur': 2
             }
-        }, 'bozeman-creek-glow'); // Add below the creek highlight
+        }, beforeLayer);
 
         // Add dashed outline for the setback boundary
         state.map.addLayer({
@@ -573,19 +580,19 @@
             filter: creekFilter,
             paint: {
                 'line-color': layer.style['line-color'],
-                'line-width': 2,
-                'line-opacity': 0.6,
+                'line-width': 2.5,
+                'line-opacity': 0.7,
                 'line-dasharray': [4, 2],
                 'line-offset': [
                     'interpolate', ['exponential', 2], ['zoom'],
-                    10, ftToPixelBase * 0.15,
-                    12, ftToPixelBase * 0.4,
-                    14, ftToPixelBase * 1,
-                    16, ftToPixelBase * 3,
-                    18, ftToPixelBase * 10
+                    10, ftToPixelBase * 0.25,
+                    12, ftToPixelBase * 0.6,
+                    14, ftToPixelBase * 1.5,
+                    16, ftToPixelBase * 4,
+                    18, ftToPixelBase * 12
                 ]
             }
-        }, 'bozeman-creek-glow');
+        }, beforeLayer);
 
         // Add label for the setback
         state.map.addLayer({
@@ -595,19 +602,19 @@
             filter: creekFilter,
             layout: {
                 'symbol-placement': 'line',
-                'text-field': `${layer.setbackDistance}ft setback`,
-                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-                'text-size': 10,
+                'text-field': `${layer.setbackDistance}ft`,
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+                'text-size': 11,
                 'text-max-angle': 30,
-                'text-offset': [0, -1.5]
+                'text-offset': [0, -2]
             },
             paint: {
                 'text-color': layer.style['line-color'],
-                'text-halo-color': 'rgba(255,255,255,0.9)',
+                'text-halo-color': 'rgba(255,255,255,0.95)',
                 'text-halo-width': 2
             },
-            minzoom: 13
-        }, 'bozeman-creek-glow');
+            minzoom: 12
+        }, beforeLayer);
     }
 
     function removeLayer(layer) {
@@ -1019,11 +1026,6 @@
             document.getElementById('legend').classList.add('hidden');
         });
 
-        // About button - show info modal
-        document.getElementById('btn-about').addEventListener('click', () => {
-            showAboutInfo();
-        });
-
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -1330,7 +1332,24 @@
             data: 'data/gallatin_streams.geojson'
         });
 
-        // Glow effect (wider, semi-transparent)
+        // Outer glow effect (very wide, soft)
+        state.map.addLayer({
+            id: 'bozeman-creek-outer-glow',
+            type: 'line',
+            source: 'bozeman-creek-source',
+            filter: ['any',
+                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ],
+            paint: {
+                'line-color': '#00ffff',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 16, 14, 28, 18, 40],
+                'line-opacity': 0.25,
+                'line-blur': 6
+            }
+        });
+
+        // Inner glow effect
         state.map.addLayer({
             id: 'bozeman-creek-glow',
             type: 'line',
@@ -1341,13 +1360,13 @@
             ],
             paint: {
                 'line-color': '#00e5ff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 8, 14, 14, 18, 20],
-                'line-opacity': 0.3,
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 10, 14, 18, 18, 26],
+                'line-opacity': 0.4,
                 'line-blur': 3
             }
         });
 
-        // Main bright cyan line
+        // Main bright cyan line - THE STAR
         state.map.addLayer({
             id: 'bozeman-creek-highlight',
             type: 'line',
@@ -1357,9 +1376,25 @@
                 ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
             ],
             paint: {
-                'line-color': '#00e5ff',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3, 14, 5, 18, 8],
+                'line-color': '#00ffff',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 4, 14, 7, 18, 12],
                 'line-opacity': 1
+            }
+        });
+
+        // White center line for extra pop
+        state.map.addLayer({
+            id: 'bozeman-creek-center',
+            type: 'line',
+            source: 'bozeman-creek-source',
+            filter: ['any',
+                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
+                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ],
+            paint: {
+                'line-color': '#ffffff',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 14, 2, 18, 3],
+                'line-opacity': 0.6
             }
         });
 
@@ -1374,18 +1409,19 @@
             ],
             layout: {
                 'symbol-placement': 'line',
-                'text-field': 'Bozeman Creek',
-                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
-                'text-size': 12,
+                'text-field': 'BOZEMAN CREEK',
+                'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+                'text-size': 14,
+                'text-letter-spacing': 0.1,
                 'text-max-angle': 30,
                 'text-allow-overlap': false
             },
             paint: {
-                'text-color': '#00bcd4',
-                'text-halo-color': 'rgba(0,0,0,0.8)',
-                'text-halo-width': 2
+                'text-color': '#ffffff',
+                'text-halo-color': '#00838f',
+                'text-halo-width': 2.5
             },
-            minzoom: 12
+            minzoom: 11
         });
 
         // Add culvert/underground section overlay (approximate downtown location)
@@ -1516,50 +1552,6 @@
                 'text-halo-blur': 0
             }
         });
-    }
-
-
-    // ================================================================
-    // ABOUT INFO - Modal for about button
-    // ================================================================
-
-    function showAboutInfo() {
-        const panel = document.getElementById('query-panel');
-        const content = document.getElementById('query-content');
-        const header = document.querySelector('#query-panel .query-header h3');
-        header.textContent = 'About Gallatin Continuity';
-
-        content.innerHTML = `
-            <div class="about-info-panel">
-                <div class="about-logo-row">
-                    <img src="assets/gwc-logo.png" alt="GWC" class="about-logo">
-                </div>
-                <h4>Gallatin Continuity</h4>
-                <p>An interactive map exploring how water flows continuously through zones with different rules — from natural headwaters to urban core.</p>
-
-                <h4 style="margin-top: 16px;">The Challenge</h4>
-                <p>Bozeman Creek flows 14 miles through <strong>six distinct governance zones</strong>, each with different setback requirements and regulations.</p>
-
-                <div class="highlight-box">
-                    <strong>Water flows continuously</strong>, but our rules change at every boundary line.
-                </div>
-
-                <h4 style="margin-top: 16px;">Built By</h4>
-                <p>Gallatin Watershed Council<br>
-                <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">www.gallatinwatershedcouncil.org</a></p>
-
-                <div class="detail-actions" style="margin-top: 16px;">
-                    <a href="https://www.gallatinwatershedcouncil.org/" target="_blank" class="detail-action-link">
-                        Visit GWC
-                        <svg viewBox="0 0 16 16" fill="none" width="12" height="12">
-                            <path d="M5 11l6-6M5 5h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        `;
-
-        panel.classList.remove('hidden');
     }
 
 
