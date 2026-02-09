@@ -76,10 +76,10 @@ const CONFIG = {
                 {
                     id: 'floodplains',
                     name: 'FEMA Flood Zones',
-                    description: 'Flood hazard areas',
-                    source: 'data/floodplains.geojson',
+                    description: 'Bozeman area flood hazard zones',
+                    source: 'data/bozeman_fema_flood.geojson',
                     type: 'fill',
-                    defaultOn: true,
+                    defaultOn: false,
                     style: {
                         'fill-color': [
                             'match', ['get', 'FLD_ZONE'],

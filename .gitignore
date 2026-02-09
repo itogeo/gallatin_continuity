@@ -3,9 +3,8 @@ data/raw/
 data/processed/
 
 # Large GeoJSON files (exceed Cloudflare Pages 25MB limit)
-# Only these specific large files are ignored - smaller files are tracked
+# Only floodplains is too large (34MB) - other files have been simplified
 web/data/floodplains.geojson
-web/data/streams.geojson
 
 # Keep gitkeep
 !web/data/.gitkeep
