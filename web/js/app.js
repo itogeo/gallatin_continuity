@@ -544,8 +544,8 @@
 
         // Filter for Bozeman Creek only
         const creekFilter = ['any',
-            ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-            ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+            ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+            ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
         ];
 
         // Determine which layer to insert before (if creek highlight exists)
@@ -1338,8 +1338,8 @@
             type: 'line',
             source: 'bozeman-creek-source',
             filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
                 'line-color': '#00ffff',
@@ -1355,8 +1355,8 @@
             type: 'line',
             source: 'bozeman-creek-source',
             filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
                 'line-color': '#00e5ff',
@@ -1372,8 +1372,8 @@
             type: 'line',
             source: 'bozeman-creek-source',
             filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
                 'line-color': '#00ffff',
@@ -1388,8 +1388,8 @@
             type: 'line',
             source: 'bozeman-creek-source',
             filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             paint: {
                 'line-color': '#ffffff',
@@ -1404,8 +1404,8 @@
             type: 'symbol',
             source: 'bozeman-creek-source',
             filter: ['any',
-                ['==', ['get', 'GCD_NAME'], 'Bozeman Creek'],
-                ['==', ['get', 'COM_NAME'], 'Bozeman Creek']
+                ['==', ['get', 'GCD_NAME'], 'BOZEMAN CREEK'],
+                ['==', ['get', 'COM_NAME'], 'BOZEMAN CREEK']
             ],
             layout: {
                 'symbol-placement': 'line',
