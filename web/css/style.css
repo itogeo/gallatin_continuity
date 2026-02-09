@@ -1460,8 +1460,8 @@ html, body {
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 380px;
-    max-height: calc(100% - 32px);
+    width: 340px;
+    max-height: calc(100% - 120px); /* Leave room for transect slider */
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
@@ -1917,7 +1917,7 @@ html, body {
     top: 16px;
     right: 16px;
     width: 340px;
-    max-height: calc(100% - 100px);
+    max-height: calc(100% - 120px); /* Leave room for transect slider */
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
@@ -2071,7 +2071,7 @@ html, body {
 .map-controls {
     position: absolute;
     top: 16px;
-    right: 376px;
+    right: 372px; /* Position left of story panel (340px + gap) */
     z-index: 5;
 }
 

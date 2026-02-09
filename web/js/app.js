@@ -291,7 +291,7 @@
         state.map.on('load', () => {
             console.log('Map loaded');
             activateDefaultLayers();
-            addZoneLabels();         // Zone labels along creek
+            // addZoneLabels();         // Zone labels along creek - DISABLED per user request
             addBozemanCreekHighlight(); // Creek on TOP (last) - THE CREEK IS THE TRANSECT
 
             // Auto-show the story panel
@@ -1302,12 +1302,12 @@
         const lat = lngLat.lat;
 
         let zone;
-        if (lat < 45.50) {
-            zone = 'natural';     // Hyalite headwaters area
-        } else if (lat < 45.60) {
-            zone = 'rural';       // County jurisdiction
-        } else if (lat < 45.67) {
-            zone = 'suburban';    // City annexation areas
+        if (lat < 45.58) {
+            zone = 'natural';     // Hyalite headwaters / wilderness area
+        } else if (lat < 45.66) {
+            zone = 'rural';       // Base of mountains to outer city (county jurisdiction)
+        } else if (lat < 45.68) {
+            zone = 'suburban';    // Sourdough/Kagy area - city annexation
         } else {
             zone = 'core';        // Downtown Bozeman
         }
