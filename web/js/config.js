@@ -9,7 +9,7 @@ const CONFIG = {
 
     // ---- Mapbox Settings ----
     mapbox: {
-        accessToken: window.MAPBOX_TOKEN || 'YOUR_MAPBOX_TOKEN_HERE',
+        accessToken: 'pk.eyJ1IjoiaXRvZ2VvIiwiYSI6ImNta3ByZTZpNjBsbzMzZm9vb3BxeGFoNmoifQ.pHK8DdvZh5QHAkP4iRd1yw',
         style: 'mapbox://styles/mapbox/outdoors-v12',
         center: [-111.03, 45.67],
         zoom: 11,
