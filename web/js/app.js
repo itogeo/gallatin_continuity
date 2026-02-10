@@ -210,6 +210,86 @@
             `
         },
         {
+            title: "Flood Risk & Climate",
+            zone: null,
+            flyTo: { center: [-111.03, 45.65], zoom: 11 },
+            layers: ['gallatin-streams', 'fema-flood-zones', 'fema-flood-boundaries'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon" style="font-size: 32px;">🌊</div>
+                    <div>
+                        <span class="zone-tag" style="background: #d32f2f;">Flood Threats</span>
+                        <h4>Why Consistent Protection Matters</h4>
+                    </div>
+                </div>
+
+                <p>Flooding doesn't respect jurisdictional boundaries. <strong>FEMA flood zones</strong> show where water goes during extreme events — highlighting the critical need for continuous riparian protection.</p>
+
+                <div class="policy-box" style="border-left-color: #d32f2f;">
+                    <h5>Climate & Flood Risk</h5>
+                    <p><strong>100-year floodplains (Zone A/AE)</strong> have a 1% annual flood chance</p>
+                    <p><strong>500-year floodplains (Zone X)</strong> have a 0.2% annual chance</p>
+                    <p><em>Climate change is increasing flood frequency and intensity</em></p>
+                </div>
+
+                <div class="highlight-box" style="background: #ffebee;">
+                    <strong>The Case for Continuity:</strong> Fragmented setbacks create weak points in flood resilience. When one jurisdiction allows development closer to the creek, flooding impacts cascade downstream.
+                </div>
+
+                <h4 style="margin-top: 16px;">Riparian Buffers Provide:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>Flood Storage</strong> — Riparian areas absorb and slow floodwaters</li>
+                    <li><strong>Bank Stability</strong> — Vegetation prevents erosion during high flows</li>
+                    <li><strong>Water Quality</strong> — Filters sediment and pollutants before reaching streams</li>
+                </ul>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #d32f2f"></span> High Risk (100-yr)
+                    <span class="layer-dot" style="background: #fff9c4"></span> Moderate Risk (500-yr)
+                </div>
+            `
+        },
+        {
+            title: "Development Pressure",
+            zone: null,
+            flyTo: { center: [-111.03, 45.64], zoom: 10.5 },
+            layers: ['gallatin-streams', 'subdivisions', 'zoning-designations'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon" style="font-size: 32px;">🏗️</div>
+                    <div>
+                        <span class="zone-tag" style="background: #fb8c00;">Growth Areas</span>
+                        <h4>Racing Against Development</h4>
+                    </div>
+                </div>
+
+                <p>Gallatin County is <strong>one of the fastest-growing counties in Montana</strong>. Subdivisions and rezoning are transforming agricultural lands into residential neighborhoods — often near streams.</p>
+
+                <div class="policy-box" style="border-left-color: #fb8c00;">
+                    <h5>Growth Snapshot</h5>
+                    <p><strong>1,083 subdivisions</strong> mapped across the county</p>
+                    <p><strong>Four Corners & Gallatin Gateway</strong> identified as Urban/Rural Growth Areas in Future Land Use Map</p>
+                    <p><em>Rapid growth = small window to establish riparian protections</em></p>
+                </div>
+
+                <div class="highlight-box" style="background: #fff3e0;">
+                    <strong>The Opportunity:</strong> Establishing strong, consistent setbacks NOW — before subdivision — protects riparian corridors for future generations. Once development occurs, restoration is far more expensive.
+                </div>
+
+                <h4 style="margin-top: 16px;">Why Act Now:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>Prevention vs. Restoration</strong> — Protecting buffers during development is 10x cheaper than retrofitting later</li>
+                    <li><strong>Watercourse Commons</strong> — FLUM includes riparian areas as shared resources deserving protection</li>
+                    <li><strong>Property Values</strong> — Stream corridors increase nearby property values when well-managed</li>
+                </ul>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #fb8c00"></span> Subdivisions
+                    <span class="layer-dot" style="background: #ffc107"></span> Zoning Districts
+                </div>
+            `
+        },
+        {
             title: "Toward Continuity",
             zone: null,
             flyTo: { center: CONFIG.mapbox.center, zoom: CONFIG.mapbox.zoom },

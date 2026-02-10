@@ -52,27 +52,39 @@ def simplify_geojson(input_path, output_path=None, precision=5):
     return new_size
 
 if __name__ == '__main__':
-    data_dir = os.path.join(os.path.dirname(__file__), '..', 'web', 'data')
-
-    # Files to simplify (the large ones)
-    large_files = [
-        'floodplains.geojson',
-        'streams.geojson',
-        'gallatin_streams.geojson',
-        'zoning_transect.geojson',
-        'fire_districts.geojson',
-        'public_lands.geojson',
-        'bozeman_donut.geojson',
-        'bozeman_fema_flood.geojson',
-    ]
-
-    print("Simplifying GeoJSON files (reducing coordinate precision to 5 decimals)...\n")
-
-    for filename in large_files:
-        filepath = os.path.join(data_dir, filename)
+    # If a specific file is provided, simplify just that file
+    if len(sys.argv) > 1:
+        filepath = sys.argv[1]
         if os.path.exists(filepath):
+            print(f"Simplifying {filepath}...\n")
             simplify_geojson(filepath, precision=5)
+            print("\nDone!")
         else:
-            print(f"Skipping (not found): {filename}")
+            print(f"Error: File not found: {filepath}")
+            sys.exit(1)
+    else:
+        # Otherwise, simplify all the standard files
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'web', 'data')
 
-    print("\nDone! Files have been simplified in place.")
+        # Files to simplify (the large ones)
+        large_files = [
+            'floodplains.geojson',
+            'streams.geojson',
+            'gallatin_streams.geojson',
+            'zoning_transect.geojson',
+            'fire_districts.geojson',
+            'public_lands.geojson',
+            'bozeman_donut.geojson',
+            'bozeman_fema_flood.geojson',
+        ]
+
+        print("Simplifying GeoJSON files (reducing coordinate precision to 5 decimals)...\n")
+
+        for filename in large_files:
+            filepath = os.path.join(data_dir, filename)
+            if os.path.exists(filepath):
+                simplify_geojson(filepath, precision=5)
+            else:
+                print(f"Skipping (not found): {filename}")
+
+        print("\nDone! Files have been simplified in place.")

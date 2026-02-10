@@ -75,7 +75,7 @@ const CONFIG = {
                 },
                 {
                     id: 'floodplains',
-                    name: 'FEMA Flood Zones',
+                    name: 'FEMA Flood Zones (Bozeman)',
                     description: 'Bozeman area flood hazard zones',
                     source: 'data/bozeman_fema_flood.geojson',
                     type: 'fill',
@@ -110,6 +110,70 @@ const CONFIG = {
                         description: 'Zone A/AE are high-risk areas (1% annual flood chance). Zone X is moderate-to-low risk. Flood insurance required for federally-backed mortgages in high-risk zones.',
                         actions: [
                             { label: 'FEMA Flood Map Service', url: 'https://msc.fema.gov/portal/home' }
+                        ]
+                    }
+                },
+                {
+                    id: 'fema-flood-zones',
+                    name: 'County Flood Hazard Zones',
+                    description: 'FEMA flood zones across Gallatin County',
+                    source: 'data/fema_flood_hazard_zones.geojson',
+                    type: 'fill',
+                    defaultOn: false,
+                    style: {
+                        'fill-color': [
+                            'match', ['get', 'FLD_ZONE'],
+                            'A', '#ff5252',
+                            'AE', '#d32f2f',
+                            'AO', '#ff8a80',
+                            'AH', '#ffcdd2',
+                            'X', '#fff9c4',
+                            'VE', '#880e4f',
+                            '#ff7043'
+                        ],
+                        'fill-opacity': 0.35
+                    },
+                    outlineStyle: {
+                        'line-color': '#b71c1c',
+                        'line-width': 0.5,
+                        'line-opacity': 0.3
+                    },
+                    legendColor: '#ff5252',
+                    popup: {
+                        titleField: 'FLD_ZONE',
+                        fields: [
+                            { key: 'ZONE_SUBTY', label: 'Subtype' },
+                            { key: 'STATIC_BFE', label: 'Base Flood Elevation' },
+                            { key: 'SFHA_TF', label: 'Special Flood Hazard Area' }
+                        ]
+                    },
+                    detailPanel: {
+                        title: 'FEMA Flood Hazard Zone',
+                        description: 'High-risk zones (A, AE) have 1% annual flood chance. Moderate zones (X shaded) have 0.2% chance. These zones determine development restrictions and insurance requirements.',
+                        actions: [
+                            { label: 'FEMA National Flood Hazard Layer', url: 'https://www.fema.gov/flood-maps/national-flood-hazard-layer' }
+                        ]
+                    }
+                },
+                {
+                    id: 'fema-flood-boundaries',
+                    name: 'Flood Study Boundaries',
+                    description: 'FEMA flood study extents',
+                    source: 'data/fema_flood_hazard_boundaries.geojson',
+                    type: 'line',
+                    defaultOn: false,
+                    style: {
+                        'line-color': '#1565c0',
+                        'line-width': 2,
+                        'line-opacity': 0.6,
+                        'line-dasharray': [3, 2]
+                    },
+                    legendColor: '#1565c0',
+                    popup: {
+                        titleField: 'BFE_LN_TYP',
+                        fields: [
+                            { key: 'ELEV', label: 'Elevation' },
+                            { key: 'LEN_UNIT', label: 'Unit' }
                         ]
                     }
                 }
@@ -710,6 +774,103 @@ const CONFIG = {
                         description: 'County Commissioners make decisions on land use, zoning, and development in unincorporated areas.',
                         actions: [
                             { label: 'County Commission', url: 'https://gallatincomt.virtualtownhall.net/county-commission' }
+                        ]
+                    }
+                }
+            ]
+        },
+
+        // =========================================================
+        // DEVELOPMENT & GROWTH
+        // =========================================================
+        {
+            id: 'development',
+            name: 'Development & Growth',
+            description: 'Subdivisions, zoning, and growth patterns',
+            icon: '🏗️',
+            iconClass: 'development',
+            defaultOpen: false,
+            info: {
+                title: 'Development & Growth Patterns',
+                description: 'Gallatin County is experiencing rapid growth. Understanding development patterns and future growth areas helps identify where riparian protection is most critical.',
+                resources: [
+                    { label: 'Envision Gallatin', url: 'https://envisiongallatin.com/' },
+                    { label: 'Future Land Use Map', url: 'https://www.gallatinwatershedcouncil.org/flum' }
+                ]
+            },
+            layers: [
+                {
+                    id: 'subdivisions',
+                    name: 'Subdivisions',
+                    description: 'Recorded subdivisions across Gallatin County',
+                    source: 'data/subdivisions.geojson',
+                    type: 'fill',
+                    defaultOn: false,
+                    style: {
+                        'fill-color': '#fb8c00',
+                        'fill-opacity': 0.25
+                    },
+                    outlineStyle: {
+                        'line-color': '#e65100',
+                        'line-width': 1,
+                        'line-opacity': 0.5
+                    },
+                    legendColor: '#fb8c00',
+                    popup: {
+                        titleField: 'SUB_NAME',
+                        fields: []
+                    },
+                    detailPanel: {
+                        title: 'Subdivision',
+                        description: 'Subdivisions represent development patterns and growth areas. Understanding where development is occurring helps target riparian protection efforts.',
+                        actions: [
+                            { label: 'Gallatin County Planning', url: 'https://www.gallatinmt.gov/planning-community-development' }
+                        ]
+                    }
+                },
+                {
+                    id: 'zoning-designations',
+                    name: 'Zoning Designations',
+                    description: 'Current zoning classifications',
+                    source: 'data/zoning_designations.geojson',
+                    type: 'fill',
+                    defaultOn: false,
+                    style: {
+                        'fill-color': [
+                            'match', ['get', 'ZONE'],
+                            'R-1', '#ffd54f',
+                            'R-2', '#ffca28',
+                            'R-3', '#ffc107',
+                            'R-4', '#ffb300',
+                            'R-O', '#ffa726',
+                            'B-1', '#ef5350',
+                            'B-2', '#e53935',
+                            'B-3', '#d32f2f',
+                            'M-1', '#78909c',
+                            'M-2', '#607d8b',
+                            'PLI', '#9ccc65',
+                            'AG', '#8bc34a',
+                            '#bdbdbd'
+                        ],
+                        'fill-opacity': 0.3
+                    },
+                    outlineStyle: {
+                        'line-color': '#424242',
+                        'line-width': 0.5,
+                        'line-opacity': 0.4
+                    },
+                    legendColor: '#ffc107',
+                    popup: {
+                        titleField: 'ZONE',
+                        fields: [
+                            { key: 'ZONE_DESCR', label: 'Description' }
+                        ]
+                    },
+                    detailPanel: {
+                        title: 'Zoning District',
+                        description: 'Zoning determines allowable land uses and development density. Different zones have different riparian setback requirements.',
+                        actions: [
+                            { label: 'Zoning Regulations', url: 'https://www.gallatinmt.gov/planning-community-development/pages/zoning-regulations' }
                         ]
                     }
                 }
