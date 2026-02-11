@@ -687,15 +687,16 @@ html, body {
    ================================================================= */
 .query-panel {
     position: absolute;
-    bottom: 16px;
-    right: 16px;
-    width: 320px;
-    max-height: 400px;
+    bottom: 100px;
+    left: 16px;  /* LEFT side - away from story panel */
+    right: auto;
+    width: 300px;
+    max-height: 350px;
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
-    z-index: 50; /* Above story panel (z-index 40 on mobile, 15 on desktop) */
+    z-index: 50;
     animation: slideUp var(--duration-normal) var(--ease-out);
 }
 
@@ -1197,9 +1198,13 @@ html, body {
     }
 
     .query-panel {
-        left: 16px;
-        right: 16px;
-        width: auto;
+        left: 12px;
+        right: auto;
+        bottom: auto;
+        top: calc(var(--header-height) + 60px);
+        width: calc(100% - 24px);
+        max-width: 320px;
+        max-height: 40vh;
     }
 }
 
@@ -1878,42 +1883,46 @@ html, body {
    Clean, unobtrusive, appears only when needed
    ================================================================= */
 
-/* Panel starts collapsed - just a floating button */
+/* Floating layer button - minimal and clean */
 .panel.panel-compact {
-    --panel-width: 220px;
-    position: absolute;
+    --panel-width: 200px;
+    position: absolute !important;
     left: 16px;
     top: calc(var(--header-height) + 16px);
-    width: var(--panel-width);
-    min-width: 0;
-    max-height: calc(100vh - var(--header-height) - 120px);
+    width: auto;
+    min-width: auto;
+    height: auto !important;
+    max-height: none;
     background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(12px);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
     border: 1px solid rgba(0,0,0,0.08);
-    z-index: 15;
-    overflow: hidden;
-    transition: all 250ms var(--ease-out);
+    border-right: 1px solid rgba(0,0,0,0.08) !important;
+    z-index: 20;
+    overflow: visible;
 }
 
-/* Collapsed state - just show toggle button */
+/* Collapsed = just the button */
 .panel.panel-compact.collapsed {
     width: auto;
     min-width: auto;
-    max-height: none;
     background: rgba(255, 255, 255, 0.95);
-    box-shadow: var(--shadow-md);
-    border-radius: var(--radius-md);
 }
 
 .panel.panel-compact.collapsed .panel-scroll {
     display: none;
 }
 
-.panel.panel-compact .panel-scroll {
+/* Expanded = button + layer list */
+.panel.panel-compact:not(.collapsed) {
+    width: var(--panel-width);
+}
+
+.panel.panel-compact:not(.collapsed) .panel-scroll {
+    display: block;
     padding: 8px;
-    max-height: calc(100vh - var(--header-height) - 180px);
+    max-height: 60vh;
     overflow-y: auto;
 }
 
