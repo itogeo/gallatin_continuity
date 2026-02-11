@@ -1140,6 +1140,36 @@
                 renderStoryChapter();
             }
         });
+
+        // Mobile: tap story header to collapse/expand
+        const storyHeader = document.querySelector('.story-header');
+        const storyPanel = document.getElementById('story-panel');
+        let isCollapsed = false;
+
+        if (storyHeader && window.innerWidth <= 768) {
+            storyHeader.addEventListener('click', (e) => {
+                // Don't collapse if clicking navigation buttons
+                if (e.target.closest('.story-nav-btn')) return;
+
+                isCollapsed = !isCollapsed;
+                if (isCollapsed) {
+                    storyPanel.style.maxHeight = '60px';
+                    storyPanel.style.overflow = 'hidden';
+                } else {
+                    storyPanel.style.maxHeight = '60vh';
+                    storyPanel.style.overflow = 'auto';
+                }
+            });
+        }
+
+        // Re-check on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                storyPanel.style.maxHeight = '';
+                storyPanel.style.overflow = '';
+                isCollapsed = false;
+            }
+        });
     }
 
     function toggleStoryPanel() {
