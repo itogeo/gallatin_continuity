@@ -1881,103 +1881,113 @@ html, body {
 
 
 /* =================================================================
-   MINIMAL FLOATING LAYER PANEL
-   Clean, unobtrusive, appears only when needed
+   SLIDE-OUT LAYERS PANEL
+   Clean drawer that slides from left edge
    ================================================================= */
 
-/* Floating layer button - minimal and clean */
+/* Slide-out drawer from left */
 .panel.panel-compact {
-    --panel-width: 200px;
-    position: absolute !important;
-    left: 16px;
-    top: calc(var(--header-height) + 16px);
-    width: auto !important;
-    min-width: auto !important;
+    --panel-width: 220px;
+    position: fixed !important;
+    left: 0 !important;
+    top: var(--header-height) !important;
+    bottom: 100px !important;
+    width: var(--panel-width) !important;
+    min-width: var(--panel-width) !important;
     height: auto !important;
     max-height: none !important;
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(12px);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    z-index: 20;
-    overflow: visible;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+    border: none !important;
+    border-right: 1px solid rgba(0,0,0,0.08) !important;
+    z-index: 25;
+    transform: translateX(0);
+    transition: transform 300ms var(--ease-out);
+    display: flex;
     flex-direction: column;
 }
 
-/* Collapsed = just the button */
+/* Collapsed = slide off screen */
 .panel.panel-compact.collapsed {
-    width: auto !important;
-    min-width: auto !important;
-    background: rgba(255, 255, 255, 0.95);
+    transform: translateX(calc(-100% + 40px)) !important;
 }
 
-.panel.panel-compact.collapsed .panel-scroll {
-    display: none !important;
-}
-
-/* Expanded = button + layer list */
-.panel.panel-compact:not(.collapsed) {
-    width: var(--panel-width) !important;
-}
-
-.panel.panel-compact:not(.collapsed) .panel-scroll {
-    display: block !important;
-    padding: 8px;
-    max-height: 55vh;
+.panel.panel-compact .panel-scroll {
+    flex: 1;
+    padding: 12px;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-/* Minimal toggle button */
+/* Toggle tab on the right edge */
 .panel.panel-compact .panel-toggle {
-    position: relative;
-    right: auto;
-    left: auto;
-    top: auto;
-    width: 100%;
-    height: 36px;
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0 12px;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--gray-100);
+    gap: 4px;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-left: none;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.08);
     color: var(--gray-600);
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     cursor: pointer;
     transition: all 150ms;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
 }
 
 .panel.panel-compact .panel-toggle:hover {
-    background: var(--gray-50);
+    background: var(--white);
     color: var(--water-deep);
+    box-shadow: 4px 0 16px rgba(0,0,0,0.12);
 }
 
 .panel.panel-compact .panel-toggle svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    transform: rotate(0deg);
     transition: transform 200ms;
 }
 
-.panel.panel-compact.collapsed .panel-toggle {
-    border-bottom: none;
-}
-
 .panel.panel-compact.collapsed .panel-toggle svg {
-    transform: rotate(90deg);
+    transform: rotate(180deg);
 }
 
-/* Ultra-compact category headers */
+/* Panel header */
+.panel.panel-compact::before {
+    content: 'Map Layers';
+    display: block;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--water-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
+}
+
+/* Compact category headers */
 .panel.panel-compact .category-header {
-    padding: 6px 8px;
-    font-size: 0.75rem;
+    padding: 8px 10px;
+    font-size: 0.78rem;
     border-radius: var(--radius-sm);
+    margin-bottom: 2px;
 }
 
 .panel.panel-compact .category-icon {
