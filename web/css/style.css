@@ -1874,84 +1874,161 @@ html, body {
 
 
 /* =================================================================
-   COMPACT PANEL MODE - Subtle and Clean
+   MINIMAL FLOATING LAYER PANEL
+   Clean, unobtrusive, appears only when needed
    ================================================================= */
+
+/* Panel starts collapsed - just a floating button */
 .panel.panel-compact {
-    --panel-width: 240px;
+    --panel-width: 220px;
+    position: absolute;
+    left: 16px;
+    top: calc(var(--header-height) + 16px);
     width: var(--panel-width);
-    min-width: var(--panel-width);
+    min-width: 0;
+    max-height: calc(100vh - var(--header-height) - 120px);
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0,0,0,0.08);
+    z-index: 15;
+    overflow: hidden;
+    transition: all 250ms var(--ease-out);
+}
+
+/* Collapsed state - just show toggle button */
+.panel.panel-compact.collapsed {
+    width: auto;
+    min-width: auto;
+    max-height: none;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-md);
+}
+
+.panel.panel-compact.collapsed .panel-scroll {
+    display: none;
 }
 
 .panel.panel-compact .panel-scroll {
-    padding: 10px;
+    padding: 8px;
+    max-height: calc(100vh - var(--header-height) - 180px);
+    overflow-y: auto;
 }
 
+/* Minimal toggle button */
+.panel.panel-compact .panel-toggle {
+    position: relative;
+    right: auto;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 12px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-600);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 150ms;
+}
+
+.panel.panel-compact .panel-toggle:hover {
+    background: var(--gray-50);
+    color: var(--water-deep);
+}
+
+.panel.panel-compact .panel-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 200ms;
+}
+
+.panel.panel-compact.collapsed .panel-toggle {
+    border-bottom: none;
+}
+
+.panel.panel-compact.collapsed .panel-toggle svg {
+    transform: rotate(90deg);
+}
+
+/* Ultra-compact category headers */
 .panel.panel-compact .category-header {
-    padding: 8px 10px;
-    font-size: 0.8rem;
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
 }
 
 .panel.panel-compact .category-icon {
-    width: 20px;
-    height: 20px;
-    font-size: 11px;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
 }
 
 .panel.panel-compact .category-name {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 600;
 }
 
 .panel.panel-compact .category-count {
-    font-size: 0.65rem;
-    opacity: 0.6;
+    display: none; /* Hide count for cleaner look */
 }
 
-.panel.panel-compact .layer-item {
-    padding: 5px 8px 5px 32px;
-}
-
-.panel.panel-compact .layer-toggle {
-    width: 28px;
-    height: 16px;
-}
-
-.panel.panel-compact .layer-toggle .toggle-thumb {
+.panel.panel-compact .category-chevron {
     width: 12px;
     height: 12px;
 }
 
+/* Compact layer items */
+.panel.panel-compact .layer-item {
+    padding: 4px 6px 4px 28px;
+}
+
+.panel.panel-compact .layer-toggle {
+    width: 24px;
+    height: 14px;
+}
+
+.panel.panel-compact .layer-toggle .toggle-thumb {
+    width: 10px;
+    height: 10px;
+}
+
 .panel.panel-compact .layer-toggle input:checked ~ .toggle-thumb {
-    transform: translateX(12px);
+    transform: translateX(10px);
 }
 
 .panel.panel-compact .layer-name {
-    font-size: 0.76rem;
+    font-size: 0.7rem;
 }
 
 .panel.panel-compact .layer-desc {
-    font-size: 0.68rem;
-    display: none; /* Hide descriptions for cleaner look */
-}
-
-.panel.panel-compact .layer-swatch {
-    width: 8px;
-    height: 8px;
-}
-
-/* Hide layer info buttons for cleaner interface */
-.panel.panel-compact .layer-info-btn {
     display: none;
 }
 
-.panel.panel-compact .category-info-btn {
-    opacity: 0.5;
+.panel.panel-compact .layer-swatch {
+    width: 6px;
+    height: 6px;
 }
 
-.panel.panel-compact .category-info-btn:hover {
-    opacity: 1;
+/* Hide all info buttons */
+.panel.panel-compact .layer-info-btn,
+.panel.panel-compact .category-info-btn {
+    display: none;
+}
+
+/* Category layers container */
+.panel.panel-compact .category-layers {
+    padding-left: 4px;
 }
 
 

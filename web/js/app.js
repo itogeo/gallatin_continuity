@@ -869,25 +869,61 @@
                 const props = feature.properties;
                 const popup = layer.popup;
 
-                if (popup) {
-                    const title = props[popup.titleField] || layer.name;
-                    html += `<div class="detail-feature ${idx > 0 ? 'detail-feature-border' : ''}">`;
-                    html += `<div class="detail-feature-title">${title}</div>`;
+                // Get title from popup config or find a good property
+                let title = layer.name;
+                if (popup && popup.titleField && props[popup.titleField]) {
+                    title = props[popup.titleField];
+                } else {
+                    // Try common name fields
+                    const nameFields = ['NAME', 'Name', 'name', 'PARK_NAME', 'SUB_NAME', 'GCD_NAME', 'COM_NAME', 'ZONE', 'FLD_ZONE', 'DISTRICT'];
+                    for (const field of nameFields) {
+                        if (props[field] && props[field] !== 'null') {
+                            title = props[field];
+                            break;
+                        }
+                    }
+                }
 
-                    if (popup.fields && popup.fields.length > 0) {
+                html += `<div class="detail-feature ${idx > 0 ? 'detail-feature-border' : ''}">`;
+                html += `<div class="detail-feature-title">${title}</div>`;
+
+                // Show defined popup fields first
+                if (popup && popup.fields && popup.fields.length > 0) {
+                    html += `<div class="detail-feature-props">`;
+                    popup.fields.forEach(field => {
+                        if (props[field.key] && props[field.key] !== 'null') {
+                            html += `<div class="detail-prop">
+                                <span class="detail-prop-label">${field.label}</span>
+                                <span class="detail-prop-value">${props[field.key]}</span>
+                            </div>`;
+                        }
+                    });
+                    html += `</div>`;
+                } else {
+                    // Auto-show interesting properties if no popup fields defined
+                    const skipFields = ['OBJECTID', 'Shape_Area', 'Shape_Length', 'GlobalID', 'Shape.STArea()', 'Shape.STLength()'];
+                    const interestingProps = Object.entries(props)
+                        .filter(([key, val]) =>
+                            val && val !== 'null' && val !== '' &&
+                            !skipFields.includes(key) &&
+                            typeof val !== 'object'
+                        )
+                        .slice(0, 6); // Limit to 6 properties
+
+                    if (interestingProps.length > 0) {
                         html += `<div class="detail-feature-props">`;
-                        popup.fields.forEach(field => {
-                            if (props[field.key] && props[field.key] !== 'null') {
-                                html += `<div class="detail-prop">
-                                    <span class="detail-prop-label">${field.label}</span>
-                                    <span class="detail-prop-value">${props[field.key]}</span>
-                                </div>`;
-                            }
+                        interestingProps.forEach(([key, val]) => {
+                            // Format the key nicely
+                            const label = key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+                            html += `<div class="detail-prop">
+                                <span class="detail-prop-label">${label}</span>
+                                <span class="detail-prop-value">${val}</span>
+                            </div>`;
                         });
                         html += `</div>`;
                     }
-                    html += `</div>`;
                 }
+                html += `</div>`;
             });
 
             // Show layer context info (detailPanel)
