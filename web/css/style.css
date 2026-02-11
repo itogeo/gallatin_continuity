@@ -693,9 +693,9 @@ html, body {
     max-height: 400px;
     background: var(--white);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
     overflow: hidden;
-    z-index: 5;
+    z-index: 50; /* Above story panel (z-index 40 on mobile, 15 on desktop) */
     animation: slideUp var(--duration-normal) var(--ease-out);
 }
 
@@ -1874,38 +1874,43 @@ html, body {
 
 
 /* =================================================================
-   COMPACT PANEL MODE
+   COMPACT PANEL MODE - Subtle and Clean
    ================================================================= */
 .panel.panel-compact {
-    --panel-width: 260px;
+    --panel-width: 240px;
     width: var(--panel-width);
     min-width: var(--panel-width);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
 }
 
 .panel.panel-compact .panel-scroll {
-    padding: 12px;
+    padding: 10px;
 }
 
 .panel.panel-compact .category-header {
     padding: 8px 10px;
+    font-size: 0.8rem;
 }
 
 .panel.panel-compact .category-icon {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
 }
 
 .panel.panel-compact .category-name {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
+    font-weight: 600;
 }
 
 .panel.panel-compact .category-count {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
+    opacity: 0.6;
 }
 
 .panel.panel-compact .layer-item {
-    padding: 6px 10px 6px 40px;
+    padding: 5px 8px 5px 32px;
 }
 
 .panel.panel-compact .layer-toggle {
@@ -1923,17 +1928,30 @@ html, body {
 }
 
 .panel.panel-compact .layer-name {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
 }
 
 .panel.panel-compact .layer-desc {
-    font-size: 0.7rem;
-    display: none;
+    font-size: 0.68rem;
+    display: none; /* Hide descriptions for cleaner look */
 }
 
 .panel.panel-compact .layer-swatch {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
+}
+
+/* Hide layer info buttons for cleaner interface */
+.panel.panel-compact .layer-info-btn {
+    display: none;
+}
+
+.panel.panel-compact .category-info-btn {
+    opacity: 0.5;
+}
+
+.panel.panel-compact .category-info-btn:hover {
+    opacity: 1;
 }
 
 
@@ -2500,12 +2518,13 @@ html, body {
         display: none; /* Hide on mobile to reduce clutter */
     }
 
-    /* Query panel */
+    /* Query panel - position above story panel */
     .query-panel {
         left: 12px;
         right: 12px;
         bottom: calc(60vh + 12px);
         max-width: none;
+        z-index: 50; /* Ensure it's above story panel */
     }
 
     /* Legend */

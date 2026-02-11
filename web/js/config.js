@@ -324,7 +324,7 @@ const CONFIG = {
             description: 'Municipal boundaries, zoning, and planning',
             icon: '🏛️',
             iconClass: 'govern',
-            defaultOpen: true,
+            defaultOpen: false,
             info: {
                 title: 'City of Bozeman Governance',
                 description: 'Within city limits, Bozeman has jurisdiction over land use, zoning, utilities, and stormwater management. The city manages urban streams and enforces development standards.',
@@ -416,7 +416,7 @@ const CONFIG = {
             description: 'County planning districts and jurisdictions',
             icon: '🗺️',
             iconClass: 'county',
-            defaultOpen: true,
+            defaultOpen: false,
             info: {
                 title: 'Gallatin County Governance',
                 description: 'Outside city limits, Gallatin County manages land use through planning districts. The Hyalite and Bozeman Donut areas have specific zoning regulations.',
@@ -562,7 +562,7 @@ const CONFIG = {
             description: 'Watercourse setback regulations by jurisdiction',
             icon: '📏',
             iconClass: 'policy',
-            defaultOpen: true,
+            defaultOpen: false,
             info: {
                 title: 'Watercourse Setbacks',
                 description: 'Different jurisdictions have different setback requirements for development near streams. These buffers protect water quality, reduce flood damage, and preserve habitat.',
