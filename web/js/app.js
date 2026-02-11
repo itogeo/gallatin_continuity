@@ -290,6 +290,56 @@
             `
         },
         {
+            title: "Setback Reform Close-Up",
+            zone: null,
+            flyTo: { center: [-111.042, 45.672], zoom: 15 },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'setback-city-75', 'setback-county-150', 'setback-proposed-300'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon" style="font-size: 32px;">📏</div>
+                    <div>
+                        <span class="zone-tag" style="background: #4caf50;">Reform Example</span>
+                        <h4>Setbacks in Detail</h4>
+                    </div>
+                </div>
+
+                <p>This close-up view shows <strong>how different setback policies</strong> would protect the same stretch of Bozeman Creek.</p>
+
+                <div class="setback-comparison triple">
+                    <div class="setback-item city" style="border-color: #e91e63;">
+                        <span class="setback-value" style="color: #e91e63;">75ft</span>
+                        <span class="setback-label">Current City</span>
+                    </div>
+                    <div class="setback-item current" style="border-color: #ff9800;">
+                        <span class="setback-value" style="color: #ff9800;">150ft</span>
+                        <span class="setback-label">Current County</span>
+                    </div>
+                    <div class="setback-item proposed" style="border-color: #4caf50;">
+                        <span class="setback-value" style="color: #4caf50;">300ft</span>
+                        <span class="setback-label">Proposed</span>
+                    </div>
+                </div>
+
+                <div class="policy-box" style="border-left-color: #4caf50;">
+                    <h5>What You're Seeing</h5>
+                    <p><strong style="color: #e91e63;">Pink = 75ft</strong> City of Bozeman's current standard</p>
+                    <p><strong style="color: #ff9800;">Orange = 150ft</strong> Gallatin County's current standard</p>
+                    <p><strong style="color: #4caf50;">Green = 300ft</strong> Proposed enhanced protection</p>
+                </div>
+
+                <div class="highlight-box" style="background: #e8f5e9;">
+                    <strong>Why 300ft?</strong> Research shows 300ft buffers provide effective habitat connectivity, flood mitigation, and water quality protection. The extra 150ft makes a significant difference for wildlife corridors.
+                </div>
+
+                <h4 style="margin-top: 16px;">Key Reform Priorities:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>County adoption of 300ft</strong> in high-priority stream reaches</li>
+                    <li><strong>City harmonization</strong> — match county standards at minimum</li>
+                    <li><strong>Subdivision review</strong> — require setbacks before approval</li>
+                </ul>
+            `
+        },
+        {
             title: "Toward Continuity",
             zone: null,
             flyTo: { center: CONFIG.mapbox.center, zoom: CONFIG.mapbox.zoom },
