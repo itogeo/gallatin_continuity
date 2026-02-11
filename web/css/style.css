@@ -688,10 +688,11 @@ html, body {
 .query-panel {
     position: absolute;
     bottom: 100px;
-    left: 16px;  /* LEFT side - away from story panel */
+    left: 50%;
+    transform: translateX(-50%);  /* Center horizontally */
     right: auto;
-    width: 300px;
-    max-height: 350px;
+    width: 320px;
+    max-height: 280px;
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
@@ -1198,13 +1199,14 @@ html, body {
     }
 
     .query-panel {
-        left: 12px;
+        left: 50%;
+        transform: translateX(-50%);
         right: auto;
         bottom: auto;
-        top: calc(var(--header-height) + 60px);
-        width: calc(100% - 24px);
-        max-width: 320px;
-        max-height: 40vh;
+        top: calc(var(--header-height) + 12px);
+        width: calc(100% - 32px);
+        max-width: 340px;
+        max-height: 35vh;
     }
 }
 

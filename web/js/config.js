@@ -48,13 +48,58 @@ const CONFIG = {
                 {
                     id: 'gallatin-streams',
                     name: 'County Waterways',
-                    description: 'Gallatin County streams and rivers',
+                    description: 'Gallatin County streams and rivers - scaled by importance',
                     source: 'data/gallatin_streams.geojson',
                     type: 'line',
                     defaultOn: true,
                     style: {
                         'line-color': '#2980b9',
-                        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1, 14, 2.5, 18, 4],
+                        // Scale line width by stream importance (name-based hierarchy)
+                        'line-width': [
+                            'interpolate', ['linear'], ['zoom'],
+                            10, ['case',
+                                // Large rivers
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'GALLATIN RIVER'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'EAST GALLATIN RIVER']
+                                ], 3,
+                                // Major creeks
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BOZEMAN CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'HYALITE CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'SOURDOUGH CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BRIDGER CREEK']
+                                ], 2,
+                                // Default - small streams
+                                1
+                            ],
+                            14, ['case',
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'GALLATIN RIVER'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'EAST GALLATIN RIVER']
+                                ], 6,
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BOZEMAN CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'HYALITE CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'SOURDOUGH CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BRIDGER CREEK']
+                                ], 4,
+                                2
+                            ],
+                            18, ['case',
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'GALLATIN RIVER'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'EAST GALLATIN RIVER']
+                                ], 10,
+                                ['any',
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BOZEMAN CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'HYALITE CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'SOURDOUGH CREEK'],
+                                    ['==', ['upcase', ['get', 'GCD_NAME']], 'BRIDGER CREEK']
+                                ], 6,
+                                3
+                            ]
+                        ],
                         'line-opacity': 0.85
                     },
                     legendColor: '#2980b9',
@@ -62,12 +107,13 @@ const CONFIG = {
                         titleField: 'GCD_NAME',
                         fields: [
                             { key: 'COM_NAME', label: 'Common Name' },
+                            { key: 'DLG_STATUS', label: 'Flow Type' },
                             { key: 'TYPE', label: 'Type' }
                         ]
                     },
                     detailPanel: {
                         title: 'Waterway Information',
-                        description: 'Part of the Gallatin watershed drainage network. Source: Gallatin County GIS Planning MapServer.',
+                        description: 'Part of the Gallatin watershed drainage network. Line thickness reflects stream importance. Source: Gallatin County GIS.',
                         actions: [
                             { label: 'County GIS Data', url: 'https://www.gallatinmt.gov/geographic-information-services-gis/pages/data-download' }
                         ]
