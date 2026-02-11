@@ -292,7 +292,7 @@
         {
             title: "Setback Reform Close-Up",
             zone: null,
-            flyTo: { center: [-111.038, 45.6785], zoom: 16.5 },
+            flyTo: { center: [-111.01, 45.662], zoom: 15.5 },
             layers: ['gallatin-streams', 'bozeman-city-limits', 'setback-city-75', 'setback-county-150', 'setback-proposed-300'],
             content: `
                 <div class="zone-heading">

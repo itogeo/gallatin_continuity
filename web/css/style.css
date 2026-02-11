@@ -1881,105 +1881,75 @@ html, body {
 
 
 /* =================================================================
-   SLIDE-OUT LAYERS PANEL
-   Clean drawer that slides from left edge
+   SIMPLE FLOATING LAYERS PANEL
+   Click to expand dropdown
    ================================================================= */
 
-/* Slide-out drawer from left */
 .panel.panel-compact {
     --panel-width: 220px;
     position: fixed !important;
-    left: 0 !important;
-    top: var(--header-height) !important;
-    bottom: 100px !important;
-    width: var(--panel-width) !important;
-    min-width: var(--panel-width) !important;
+    left: 12px !important;
+    top: calc(var(--header-height) + 12px) !important;
+    width: auto !important;
+    min-width: auto !important;
     height: auto !important;
     max-height: none !important;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(12px);
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-    box-shadow: 4px 0 20px rgba(0,0,0,0.1);
-    border: none !important;
-    border-right: 1px solid rgba(0,0,0,0.08) !important;
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0,0,0,0.1) !important;
     z-index: 25;
-    transform: translateX(0);
-    transition: transform 300ms var(--ease-out);
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Collapsed = slide off screen */
-.panel.panel-compact.collapsed {
-    transform: translateX(calc(-100% + 40px)) !important;
-}
-
-.panel.panel-compact .panel-scroll {
-    flex: 1;
-    padding: 12px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Toggle tab on the right edge */
+/* Toggle button - always visible */
 .panel.panel-compact .panel-toggle {
-    position: absolute;
-    right: -40px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 80px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 8px 4px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0,0,0,0.08);
-    border-left: none;
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    box-shadow: 4px 0 12px rgba(0,0,0,0.08);
-    color: var(--gray-600);
-    font-size: 0.65rem;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--white);
+    border: none;
+    color: var(--gray-700);
+    font-size: 0.8rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
     cursor: pointer;
-    transition: all 150ms;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
+    width: 100%;
+    text-align: left;
 }
 
 .panel.panel-compact .panel-toggle:hover {
-    background: var(--white);
+    background: var(--gray-50);
     color: var(--water-deep);
-    box-shadow: 4px 0 16px rgba(0,0,0,0.12);
 }
 
 .panel.panel-compact .panel-toggle svg {
     width: 16px;
     height: 16px;
-    transform: rotate(0deg);
+    flex-shrink: 0;
     transition: transform 200ms;
 }
 
 .panel.panel-compact.collapsed .panel-toggle svg {
-    transform: rotate(180deg);
+    transform: rotate(-90deg);
 }
 
-/* Panel header */
-.panel.panel-compact::before {
-    content: 'Map Layers';
+/* Layer content - shown when expanded */
+.panel.panel-compact .panel-scroll {
     display: block;
-    padding: 12px 14px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--water-deep);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid var(--gray-100);
-    background: var(--gray-50);
+    padding: 0 10px 10px 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+    border-top: 1px solid var(--gray-100);
+}
+
+.panel.panel-compact.collapsed .panel-scroll {
+    display: none !important;
+}
+
+/* Expanded state */
+.panel.panel-compact:not(.collapsed) {
+    width: var(--panel-width);
 }
 
 /* Compact category headers */
@@ -1987,7 +1957,7 @@ html, body {
     padding: 8px 10px;
     font-size: 0.78rem;
     border-radius: var(--radius-sm);
-    margin-bottom: 2px;
+    margin-top: 6px;
 }
 
 .panel.panel-compact .category-icon {
