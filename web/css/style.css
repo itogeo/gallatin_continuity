@@ -1651,99 +1651,95 @@ html, body {
 
 
 /* =================================================================
-   TRANSECT SLIDER (Bottom of map)
+   ZONE TOGGLES (Bottom of map)
    ================================================================= */
-.transect-slider {
+.zone-toggles {
     position: absolute;
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--white);
-    padding: 12px 20px 10px;
+    padding: 10px 16px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     z-index: 5;
-    width: 420px;
     max-width: calc(100% - 32px);
 }
 
-.transect-slider-track {
-    display: flex;
-    height: 36px;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-}
-
-.transect-zone-segment {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
+.zone-toggles-label {
     font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    transition: all var(--duration-fast);
-    position: relative;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.transect-zone-segment:hover {
-    filter: brightness(1.1);
-}
-
-.transect-zone-segment .zone-label {
-    opacity: 0.85;
-    pointer-events: none;
-}
-
-.transect-zone-segment.active {
-    flex: 1.4;
-}
-
-.transect-zone-segment.active .zone-label {
-    opacity: 1;
-    font-weight: 700;
-}
-
-.transect-slider-thumb {
-    position: absolute;
-    top: -4px;
-    width: 6px;
-    height: 44px;
-    background: var(--white);
-    border: 2px solid var(--gray-800);
-    border-radius: 3px;
-    box-shadow: var(--shadow-md);
-    pointer-events: none;
-    transition: left var(--duration-normal) var(--ease-out);
-    left: 0;
-}
-
-.transect-endpoints {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 8px;
-    font-size: 0.72rem;
+    letter-spacing: 0.05em;
     color: var(--gray-500);
-}
-
-.transect-endpoints span:first-child,
-.transect-endpoints span:last-child {
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.transect-current-label {
-    font-weight: 600;
-    color: var(--water-deep);
     text-align: center;
-    flex: 1;
-    padding: 0 8px;
+    margin-bottom: 8px;
+}
+
+.zone-toggles-row {
+    display: flex;
+    gap: 8px;
+}
+
+.zone-toggle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    background: var(--gray-50);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+    min-width: 80px;
+}
+
+.zone-toggle-btn:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+}
+
+.zone-toggle-btn.active {
+    border-color: var(--water-mid);
+    background: var(--water-tint);
+}
+
+.zone-toggle-btn[data-zone="natural"].active {
+    border-color: #1e4d2b;
+    background: rgba(30, 77, 43, 0.1);
+}
+
+.zone-toggle-btn[data-zone="parks"].active {
+    border-color: #66bb6a;
+    background: rgba(102, 187, 106, 0.15);
+}
+
+.zone-toggle-btn[data-zone="residential"].active {
+    border-color: #52b788;
+    background: rgba(82, 183, 136, 0.15);
+}
+
+.zone-toggle-btn[data-zone="urban"].active {
+    border-color: #e76f51;
+    background: rgba(231, 111, 81, 0.15);
+}
+
+.zone-toggle-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.zone-toggle-name {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.zone-toggle-btn.active .zone-toggle-name {
+    color: var(--gray-900);
 }
 
 /* Story layer legend in content */
@@ -2194,7 +2190,7 @@ html, body {
     .map-controls {
         right: 16px;
         top: auto;
-        bottom: 100px;
+        bottom: 80px; /* Above zone toggles */
     }
 }
 
@@ -2582,9 +2578,27 @@ html, body {
         font-size: 22px;
     }
 
-    /* Transect slider - hide or simplify on mobile */
-    .transect-slider {
-        display: none; /* Hide on mobile to reduce clutter */
+    /* Zone toggles - compact on mobile */
+    .zone-toggles {
+        padding: 8px 12px;
+        bottom: 12px;
+    }
+
+    .zone-toggles-label {
+        display: none;
+    }
+
+    .zone-toggle-btn {
+        padding: 8px 10px;
+        min-width: 60px;
+    }
+
+    .zone-toggle-icon {
+        font-size: 1.2rem;
+    }
+
+    .zone-toggle-name {
+        font-size: 0.6rem;
     }
 
     /* Query panel - position above story panel */
@@ -2643,6 +2657,28 @@ html, body {
 
 /* Mobile portrait */
 @media (max-width: 480px) {
+    /* Zone toggles - even more compact */
+    .zone-toggles {
+        padding: 6px 8px;
+    }
+
+    .zone-toggles-row {
+        gap: 4px;
+    }
+
+    .zone-toggle-btn {
+        padding: 6px 8px;
+        min-width: 50px;
+    }
+
+    .zone-toggle-icon {
+        font-size: 1rem;
+    }
+
+    .zone-toggle-name {
+        font-size: 0.55rem;
+    }
+
     /* Header - ultra compact */
     .header {
         padding: 6px 10px;

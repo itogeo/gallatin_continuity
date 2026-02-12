@@ -134,27 +134,26 @@
                 </div>
             </div>
 
-            <!-- Transect Slider (bottom) - follows Bozeman Creek -->
-            <div id="transect-slider" class="transect-slider">
-                <div class="transect-slider-track">
-                    <div class="transect-zone-segment" data-index="0" data-zone="natural" style="background: #1e4d2b;">
-                        <span class="zone-label">Natural</span>
-                    </div>
-                    <div class="transect-zone-segment" data-index="1" data-zone="rural" style="background: #2d6a4f;">
-                        <span class="zone-label">Rural</span>
-                    </div>
-                    <div class="transect-zone-segment" data-index="2" data-zone="suburban" style="background: #52b788;">
-                        <span class="zone-label">Suburban</span>
-                    </div>
-                    <div class="transect-zone-segment" data-index="3" data-zone="core" style="background: #e76f51;">
-                        <span class="zone-label">Urban Core</span>
-                    </div>
-                    <div class="transect-slider-thumb" id="transect-thumb"></div>
-                </div>
-                <div class="transect-endpoints">
-                    <span>🏔️ Hyalite</span>
-                    <span id="transect-label" class="transect-current-label">Follow Bozeman Creek</span>
-                    <span>Downtown 🏢</span>
+            <!-- Zone Toggles (bottom) - Filter map by zone -->
+            <div id="zone-toggles" class="zone-toggles">
+                <div class="zone-toggles-label">Explore by Zone:</div>
+                <div class="zone-toggles-row">
+                    <button class="zone-toggle-btn" data-zone="natural">
+                        <span class="zone-toggle-icon">🏔️</span>
+                        <span class="zone-toggle-name">Natural</span>
+                    </button>
+                    <button class="zone-toggle-btn" data-zone="parks">
+                        <span class="zone-toggle-icon">🌳</span>
+                        <span class="zone-toggle-name">Parks</span>
+                    </button>
+                    <button class="zone-toggle-btn" data-zone="residential">
+                        <span class="zone-toggle-icon">🏡</span>
+                        <span class="zone-toggle-name">Residential</span>
+                    </button>
+                    <button class="zone-toggle-btn" data-zone="urban">
+                        <span class="zone-toggle-icon">🏢</span>
+                        <span class="zone-toggle-name">Urban Core</span>
+                    </button>
                 </div>
             </div>
         </main>

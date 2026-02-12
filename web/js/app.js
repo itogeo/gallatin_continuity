@@ -171,6 +171,50 @@
             `
         },
         {
+            title: "Creek Through the Parks",
+            zone: "suburban",
+            flyTo: { center: [-111.035, 45.675], zoom: 13.5 },
+            layers: ['gallatin-streams', 'bozeman-parks', 'bozeman-city-limits'],
+            content: `
+                <div class="zone-heading">
+                    <div class="zone-icon" style="font-size: 32px;">🌳</div>
+                    <div>
+                        <span class="zone-tag" style="background: #66bb6a;">Parks & Greenways</span>
+                        <h4>A Necklace of Parks</h4>
+                    </div>
+                </div>
+
+                <p>Bozeman Creek's greatest asset is the <strong>chain of parks</strong> that already protect much of its urban corridor. These green spaces are the backbone of any continuity vision.</p>
+
+                <div class="policy-box vision">
+                    <h5>The Parks Along the Creek</h5>
+                    <p><strong>Sourdough Trail Park</strong> — Multi-use trail connecting Kagy to the south</p>
+                    <p><strong>Tuckerman Park</strong> — Neighborhood park with creek access</p>
+                    <p><strong>Hauser Park</strong> — Family-friendly recreation</p>
+                    <p><strong>Gallagator Linear Park</strong> — Following the historic rail corridor</p>
+                    <p><strong>Pete's Hill</strong> — Beloved hillside overlooking downtown</p>
+                    <p><strong>Story Mill Park</strong> — 60-acre flagship restoration</p>
+                </div>
+
+                <div class="highlight-box" style="background: #e8f5e9;">
+                    <strong>The Vision:</strong> Connect these parks into a continuous greenway from the headwaters to the East Gallatin — a "necklace" of protected riparian habitat threading through the city.
+                </div>
+
+                <h4 style="margin-top: 16px;">Why Parks Matter for Continuity:</h4>
+                <ul style="margin: 12px 0; padding-left: 20px; color: var(--gray-600);">
+                    <li><strong>Permanent Protection</strong> — Parkland is protected from development</li>
+                    <li><strong>Wildlife Corridors</strong> — Connected parks allow species movement</li>
+                    <li><strong>Flood Resilience</strong> — Parkland absorbs stormwater naturally</li>
+                    <li><strong>Community Access</strong> — People connect with their watershed</li>
+                </ul>
+
+                <div class="story-layer-legend">
+                    <span class="layer-dot" style="background: #66bb6a"></span> Parks & Open Space
+                    <span class="layer-dot" style="background: #2d6a8a"></span> Bozeman Creek
+                </div>
+            `
+        },
+        {
             title: "Urban Core",
             zone: "core",
             flyTo: { center: [-111.038, 45.679], zoom: 14 },
@@ -1387,130 +1431,166 @@
 
 
     // ================================================================
-    // TRANSECT SLIDER
+    // ZONE TOGGLES
     // ================================================================
 
-    function setupTransectIndicator() {
-        // The transect zone segments
-        const segments = document.querySelectorAll('.transect-zone-segment');
+    // Zone configurations for toggling
+    const ZONE_CONFIGS = {
+        natural: {
+            flyTo: { center: [-111.02, 45.48], zoom: 10.5 },
+            layers: ['gallatin-streams', 'public-lands', 'hyalite-zoning', 'setback-proposed-300'],
+            label: 'Natural Zone — Hyalite Headwaters'
+        },
+        parks: {
+            flyTo: { center: [-111.035, 45.675], zoom: 13.5 },
+            layers: ['gallatin-streams', 'bozeman-parks', 'bozeman-city-limits'],
+            label: 'Parks & Greenways — Creek Corridor'
+        },
+        residential: {
+            flyTo: { center: [-111.035, 45.67], zoom: 12.5 },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-zoning', 'setback-city-75'],
+            label: 'Residential — City Neighborhoods'
+        },
+        urban: {
+            flyTo: { center: [-111.038, 45.679], zoom: 14 },
+            layers: ['gallatin-streams', 'bozeman-city-limits', 'bozeman-zoning', 'setback-city-75'],
+            label: 'Urban Core — Downtown Bozeman'
+        }
+    };
 
-        segments.forEach(segment => {
-            segment.addEventListener('click', () => {
-                const index = parseInt(segment.dataset.index);
-                // Map segment index to story chapter (skip intro chapter 0)
-                const chapterIndex = index + 1;
-                if (chapterIndex < STORY_CHAPTERS.length) {
-                    state.storyIndex = chapterIndex;
-                    if (!state.storyOpen) {
-                        showStoryPanel();
-                    }
-                    renderStoryChapter();
+    let activeZone = null;
+
+    function setupZoneToggles() {
+        const toggleBtns = document.querySelectorAll('.zone-toggle-btn');
+
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const zone = btn.dataset.zone;
+
+                // If clicking the same zone, deactivate it
+                if (activeZone === zone) {
+                    deactivateZone();
+                    return;
                 }
+
+                activateZone(zone);
             });
         });
     }
 
-    function updateTransectSlider(chapterIndex) {
-        const segments = document.querySelectorAll('.transect-zone-segment');
-        const thumb = document.getElementById('transect-thumb');
-        const label = document.getElementById('transect-label');
+    function activateZone(zoneName) {
+        const config = ZONE_CONFIGS[zoneName];
+        if (!config) return;
+
+        activeZone = zoneName;
+
+        // Update button states
+        document.querySelectorAll('.zone-toggle-btn').forEach(btn => {
+            if (btn.dataset.zone === zoneName) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Set layers for this zone
+        if (config.layers) {
+            setStoryLayers(config.layers);
+        }
+
+        // Fly to location
+        if (config.flyTo && state.map) {
+            state.map.flyTo({
+                ...config.flyTo,
+                duration: 2000,
+                essential: true
+            });
+        }
+    }
+
+    function deactivateZone() {
+        activeZone = null;
 
         // Clear all active states
-        segments.forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.zone-toggle-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
 
-        // For intro (0) and conclusion (last), don't highlight a specific segment
-        if (chapterIndex === 0) {
-            label.textContent = 'Click a zone to explore';
-            thumb.style.opacity = '0';
-            return;
-        }
+        // Reset to default view
+        state.map.flyTo({
+            center: CONFIG.mapbox.center,
+            zoom: CONFIG.mapbox.zoom,
+            duration: 1500,
+            essential: true
+        });
+    }
 
-        if (chapterIndex >= STORY_CHAPTERS.length - 1) {
-            label.textContent = 'Explore the map';
-            thumb.style.opacity = '0';
-            return;
-        }
+    function highlightZoneToggle(zoneName) {
+        // Map story zone names to toggle zones
+        const zoneMapping = {
+            natural: 'natural',
+            rural: 'natural',     // Rural maps to natural toggle
+            suburban: 'residential',
+            general: 'residential',
+            center: 'urban',
+            core: 'urban'
+        };
+        const mappedZone = zoneMapping[zoneName] || zoneName;
 
-        // Map chapter index to segment (chapter 1 = segment 0, etc)
-        const segmentIndex = chapterIndex - 1;
-        const activeSegment = segments[segmentIndex];
+        document.querySelectorAll('.zone-toggle-btn').forEach(btn => {
+            if (btn.dataset.zone === mappedZone) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
 
-        if (activeSegment) {
-            activeSegment.classList.add('active');
+    function clearZoneHighlight() {
+        document.querySelectorAll('.zone-toggle-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        activeZone = null;
+    }
 
-            // Position the thumb
-            const track = document.querySelector('.transect-slider-track');
-            const trackWidth = track.offsetWidth;
-            const segmentWidth = trackWidth / segments.length;
-            const thumbPos = (segmentIndex * segmentWidth) + (segmentWidth / 2) - 3;
+    // Legacy functions for compatibility
+    function setupTransectIndicator() {
+        setupZoneToggles();
+    }
 
-            thumb.style.left = `${thumbPos}px`;
-            thumb.style.opacity = '1';
-
-            // Update label
-            const chapter = STORY_CHAPTERS[chapterIndex];
-            label.textContent = chapter.title;
+    function updateTransectSlider(chapterIndex) {
+        // Update zone toggles based on chapter
+        const chapter = STORY_CHAPTERS[chapterIndex];
+        if (chapter && chapter.zone) {
+            highlightZoneToggle(chapter.zone);
+        } else {
+            clearZoneHighlight();
         }
     }
 
     function highlightTransectZone(zoneName) {
-        const segments = document.querySelectorAll('.transect-zone-segment');
-        const label = document.getElementById('transect-label');
-
-        // Map old zone names to new 4-zone system
-        const zoneMapping = {
-            natural: 'natural',
-            rural: 'rural',
-            suburban: 'suburban',
-            general: 'suburban',  // Map to suburban
-            center: 'core',       // Map to core
-            core: 'core'
-        };
-        const mappedZone = zoneMapping[zoneName] || zoneName;
-
-        segments.forEach(segment => {
-            if (segment.dataset.zone === mappedZone) {
-                segment.classList.add('active');
-            } else {
-                segment.classList.remove('active');
-            }
-        });
-
-        // Update label
-        const labelMap = {
-            natural: 'Natural Zone — Hyalite Headwaters',
-            rural: 'Rural Zone — County Jurisdiction',
-            suburban: 'Suburban Zone — City',
-            core: 'Urban Core — Downtown Bozeman'
-        };
-        label.textContent = labelMap[mappedZone] || 'Follow Bozeman Creek';
+        highlightZoneToggle(zoneName);
     }
 
     function clearTransectHighlight() {
-        document.querySelectorAll('.transect-zone-segment').forEach(segment => {
-            segment.classList.remove('active');
-        });
-        document.getElementById('transect-label').textContent = 'Click "Story" to explore';
-        const thumb = document.getElementById('transect-thumb');
-        if (thumb) thumb.style.opacity = '0';
+        clearZoneHighlight();
     }
 
-    // Update transect based on map location (follows Bozeman Creek from south to north)
     function updateTransectFromLocation(lngLat) {
         const lat = lngLat.lat;
 
         let zone;
         if (lat < 45.58) {
-            zone = 'natural';     // Hyalite headwaters / wilderness area
+            zone = 'natural';
         } else if (lat < 45.66) {
-            zone = 'rural';       // Base of mountains to outer city (county jurisdiction)
+            zone = 'natural';
         } else if (lat < 45.68) {
-            zone = 'suburban';    // Sourdough/Kagy area - city annexation
+            zone = 'residential';
         } else {
-            zone = 'core';        // Downtown Bozeman
+            zone = 'urban';
         }
 
-        highlightTransectZone(zone);
+        highlightZoneToggle(zone);
     }
 
 
