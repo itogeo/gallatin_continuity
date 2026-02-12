@@ -38,6 +38,12 @@
                 <div class="about-section">
                     <p class="about-credit">A project of the <a href="https://www.gallatinwatershedcouncil.org/" target="_blank">Gallatin Watershed Council</a></p>
                 </div>
+                <div class="story-start-hint">
+                    <span>Begin the journey</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 4v12M10 16l4-4M10 16l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
             `
         },
         {
@@ -1166,13 +1172,8 @@
     // ================================================================
 
     function updateLegend() {
-        const legend = document.getElementById('legend');
         const content = document.getElementById('legend-content');
-
-        if (state.activeLayers.size === 0) {
-            legend.classList.add('hidden');
-            return;
-        }
+        if (!content) return;
 
         let html = '';
         state.activeLayers.forEach(id => {
@@ -1192,7 +1193,6 @@
         });
 
         content.innerHTML = html;
-        legend.classList.remove('hidden');
     }
 
 
@@ -1220,21 +1220,10 @@
             });
         });
 
-        // Panel toggle
-        document.getElementById('panel-toggle').addEventListener('click', () => {
-            const panel = document.getElementById('panel');
-            panel.classList.toggle('collapsed');
-            state.panelOpen = !state.panelOpen;
-            setTimeout(() => state.map.resize(), 300);
-        });
 
         // Query panel close
         document.getElementById('query-close').addEventListener('click', hideQueryPanel);
 
-        // Legend close
-        document.getElementById('legend-close').addEventListener('click', () => {
-            document.getElementById('legend').classList.add('hidden');
-        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1248,6 +1237,22 @@
         document.getElementById('btn-story').addEventListener('click', () => {
             toggleStoryPanel();
         });
+
+        // Layers dropdown toggle
+        const layersToggle = document.getElementById('layers-toggle');
+        const layersDropdown = document.getElementById('layers-dropdown');
+        if (layersToggle && layersDropdown) {
+            layersToggle.addEventListener('click', () => {
+                layersDropdown.classList.toggle('open');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!layersDropdown.contains(e.target)) {
+                    layersDropdown.classList.remove('open');
+                }
+            });
+        }
     }
 
 
@@ -1441,6 +1446,11 @@
             layers: ['gallatin-streams', 'public-lands', 'hyalite-zoning', 'setback-proposed-300'],
             label: 'Natural Zone — Hyalite Headwaters'
         },
+        rural: {
+            flyTo: { center: [-111.02, 45.62], zoom: 11 },
+            layers: ['gallatin-streams', 'bozeman-donut', 'hyalite-zoning', 'setback-county-150', 'setback-proposed-300'],
+            label: 'Rural Zone — County Jurisdiction'
+        },
         parks: {
             flyTo: { center: [-111.035, 45.675], zoom: 13.5 },
             layers: ['gallatin-streams', 'bozeman-parks', 'bozeman-city-limits'],
@@ -1529,8 +1539,8 @@
         // Map story zone names to toggle zones
         const zoneMapping = {
             natural: 'natural',
-            rural: 'natural',     // Rural maps to natural toggle
-            suburban: 'residential',
+            rural: 'rural',
+            suburban: 'parks',      // Suburban (city suburbs) maps to parks
             general: 'residential',
             center: 'urban',
             core: 'urban'
@@ -1580,14 +1590,16 @@
         const lat = lngLat.lat;
 
         let zone;
-        if (lat < 45.58) {
-            zone = 'natural';
-        } else if (lat < 45.66) {
-            zone = 'natural';
+        if (lat < 45.55) {
+            zone = 'natural';     // Hyalite headwaters / wilderness
+        } else if (lat < 45.64) {
+            zone = 'rural';       // County jurisdiction / Bozeman Donut
+        } else if (lat < 45.67) {
+            zone = 'parks';       // Parks corridor (Sourdough, etc.)
         } else if (lat < 45.68) {
-            zone = 'residential';
+            zone = 'residential'; // City neighborhoods
         } else {
-            zone = 'urban';
+            zone = 'urban';       // Downtown Bozeman
         }
 
         highlightZoneToggle(zone);

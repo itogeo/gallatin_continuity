@@ -1088,55 +1088,51 @@ html, body {
 
 
 /* =================================================================
-   LEGEND
+   TOP-LEFT CONTROLS (Legend + Layers Stack)
    ================================================================= */
-.legend {
+.top-left-controls {
     position: absolute;
-    bottom: 16px;
+    top: 16px;
     left: 16px;
-    width: 220px;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 240px;
+}
+
+/* Legend - Top Left */
+.legend-topleft {
     background: var(--white);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     overflow: hidden;
-    z-index: 5;
 }
 
-.legend.hidden {
-    display: none;
-}
-
-.legend-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
+.legend-topleft .legend-header {
+    padding: 8px 12px;
     border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
 }
 
-.legend-header h4 {
+.legend-topleft .legend-header h4 {
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: var(--water-deep);
+    margin: 0;
 }
 
-.legend-close {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    font-size: 16px;
+.legend-topleft .legend-content {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.legend-topleft .legend-content:empty::before {
+    content: 'Toggle layers to see legend';
     color: var(--gray-400);
-    cursor: pointer;
-    border-radius: var(--radius-sm);
-}
-
-.legend-content {
-    padding: 12px 14px;
-    font-size: 0.8rem;
+    font-style: italic;
 }
 
 .legend-item {
@@ -1166,6 +1162,130 @@ html, body {
 
 .legend-label {
     color: var(--gray-600);
+}
+
+/* Layers Dropdown */
+.layers-dropdown {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.layers-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--white);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    transition: background var(--duration-fast);
+}
+
+.layers-toggle:hover {
+    background: var(--gray-50);
+}
+
+.layers-toggle svg:first-child {
+    color: var(--water-mid);
+}
+
+.layers-toggle span {
+    flex: 1;
+    text-align: left;
+}
+
+.dropdown-chevron {
+    color: var(--gray-400);
+    transition: transform var(--duration-fast);
+}
+
+.layers-dropdown.open .dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+.layers-content {
+    display: none;
+    border-top: 1px solid var(--gray-100);
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.layers-dropdown.open .layers-content {
+    display: block;
+}
+
+/* Compact layer categories in dropdown */
+.layers-content .layer-category {
+    margin-bottom: 4px;
+}
+
+.layers-content .category-header {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+.layers-content .category-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+}
+
+.layers-content .category-name {
+    font-size: 0.72rem;
+}
+
+.layers-content .category-count {
+    display: none;
+}
+
+.layers-content .category-chevron {
+    width: 12px;
+    height: 12px;
+}
+
+.layers-content .layer-item {
+    padding: 4px 6px 4px 28px;
+}
+
+.layers-content .layer-toggle {
+    width: 24px;
+    height: 14px;
+}
+
+.layers-content .layer-toggle .toggle-thumb {
+    width: 10px;
+    height: 10px;
+}
+
+.layers-content .layer-toggle input:checked ~ .toggle-thumb {
+    transform: translateX(10px);
+}
+
+.layers-content .layer-name {
+    font-size: 0.7rem;
+}
+
+.layers-content .layer-desc {
+    display: none;
+}
+
+.layers-content .layer-swatch {
+    width: 8px;
+    height: 8px;
+}
+
+.layers-content .layer-info-btn,
+.layers-content .category-info-btn {
+    display: none;
 }
 
 
@@ -1685,14 +1805,14 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 10px 16px;
+    gap: 3px;
+    padding: 8px 12px;
     background: var(--gray-50);
     border: 2px solid transparent;
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--duration-fast) var(--ease-out);
-    min-width: 80px;
+    min-width: 65px;
 }
 
 .zone-toggle-btn:hover {
@@ -1708,6 +1828,11 @@ html, body {
 .zone-toggle-btn[data-zone="natural"].active {
     border-color: #1e4d2b;
     background: rgba(30, 77, 43, 0.1);
+}
+
+.zone-toggle-btn[data-zone="rural"].active {
+    border-color: #2d6a4f;
+    background: rgba(45, 106, 79, 0.15);
 }
 
 .zone-toggle-btn[data-zone="parks"].active {
@@ -2445,6 +2570,36 @@ html, body {
     text-decoration: underline;
 }
 
+/* Story start hint (arrows in intro slide) */
+.story-start-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--water-tint) 0%, var(--forest-pale) 100%);
+    border-radius: var(--radius-md);
+    color: var(--water-deep);
+    font-weight: 600;
+    font-size: 0.88rem;
+    animation: bounceDown 2s ease-in-out infinite;
+}
+
+.story-start-hint svg {
+    animation: arrowBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+}
+
 
 /* =================================================================
    COMPREHENSIVE MOBILE RESPONSIVE DESIGN
@@ -2589,16 +2744,46 @@ html, body {
     }
 
     .zone-toggle-btn {
-        padding: 8px 10px;
-        min-width: 60px;
+        padding: 6px 8px;
+        min-width: 50px;
     }
 
     .zone-toggle-icon {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .zone-toggle-name {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
+    }
+
+    /* Top-left controls - compact on mobile */
+    .top-left-controls {
+        top: 12px;
+        left: 12px;
+        max-width: 180px;
+    }
+
+    .legend-topleft .legend-header {
+        padding: 6px 10px;
+    }
+
+    .legend-topleft .legend-header h4 {
+        font-size: 0.75rem;
+    }
+
+    .legend-topleft .legend-content {
+        padding: 6px 10px;
+        max-height: 120px;
+        font-size: 0.7rem;
+    }
+
+    .layers-toggle {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    .layers-content {
+        max-height: 35vh;
     }
 
     /* Query panel - position above story panel */
@@ -2659,24 +2844,24 @@ html, body {
 @media (max-width: 480px) {
     /* Zone toggles - even more compact */
     .zone-toggles {
-        padding: 6px 8px;
+        padding: 6px 6px;
     }
 
     .zone-toggles-row {
-        gap: 4px;
+        gap: 3px;
     }
 
     .zone-toggle-btn {
-        padding: 6px 8px;
-        min-width: 50px;
+        padding: 5px 6px;
+        min-width: 42px;
     }
 
     .zone-toggle-icon {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .zone-toggle-name {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
     }
 
     /* Header - ultra compact */

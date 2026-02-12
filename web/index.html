@@ -56,18 +56,34 @@
     <!-- ===== MAIN LAYOUT ===== -->
     <div id="app" class="app-layout">
 
-        <!-- LEFT PANEL: Slide-out Layers Drawer -->
-        <aside id="panel" class="panel panel-compact collapsed">
-            <button id="panel-toggle" class="panel-toggle" title="Toggle layers">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>Layers</span>
-            </button>
-            <div class="panel-scroll">
-                <div id="layer-categories" class="layer-categories"></div>
+        <!-- TOP LEFT: Legend + Layers Stack -->
+        <div id="top-left-controls" class="top-left-controls">
+            <!-- Legend (always visible when layers are active) -->
+            <div id="legend" class="legend-topleft">
+                <div class="legend-header">
+                    <h4>Legend</h4>
+                </div>
+                <div id="legend-content" class="legend-content">
+                    <!-- Populated dynamically -->
+                </div>
             </div>
-        </aside>
+
+            <!-- Layers Dropdown -->
+            <div id="layers-dropdown" class="layers-dropdown">
+                <button id="layers-toggle" class="layers-toggle">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 4l6 3 6-3M2 8l6 3 6-3M2 12l6 3 6-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Layers</span>
+                    <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div id="layers-content" class="layers-content">
+                    <div id="layer-categories" class="layer-categories"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- MAP -->
         <main id="map-container" class="map-container">
@@ -123,16 +139,6 @@
                 </div>
             </div>
 
-            <!-- Legend -->
-            <div id="legend" class="legend hidden">
-                <div class="legend-header">
-                    <h4>Legend</h4>
-                    <button id="legend-close" class="legend-close">&times;</button>
-                </div>
-                <div id="legend-content" class="legend-content">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
 
             <!-- Zone Toggles (bottom) - Filter map by zone -->
             <div id="zone-toggles" class="zone-toggles">
@@ -141,6 +147,10 @@
                     <button class="zone-toggle-btn" data-zone="natural">
                         <span class="zone-toggle-icon">🏔️</span>
                         <span class="zone-toggle-name">Natural</span>
+                    </button>
+                    <button class="zone-toggle-btn" data-zone="rural">
+                        <span class="zone-toggle-icon">🌲</span>
+                        <span class="zone-toggle-name">Rural</span>
                     </button>
                     <button class="zone-toggle-btn" data-zone="parks">
                         <span class="zone-toggle-icon">🌳</span>
