@@ -1101,6 +1101,44 @@ html, body {
     max-width: 240px;
 }
 
+/* Satellite Toggle Button */
+.satellite-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--white);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    transition: all var(--duration-fast);
+}
+
+.satellite-toggle:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-200);
+}
+
+.satellite-toggle.active {
+    background: var(--gray-800);
+    color: var(--white);
+    border-color: var(--gray-800);
+}
+
+.satellite-toggle.active svg {
+    color: var(--water-light);
+}
+
+.satellite-toggle svg {
+    color: var(--water-mid);
+    flex-shrink: 0;
+}
+
 /* Legend - Top Left */
 .legend-topleft {
     background: var(--white);
@@ -2760,7 +2798,16 @@ html, body {
     .top-left-controls {
         top: 12px;
         left: 12px;
-        max-width: 180px;
+        max-width: 160px;
+    }
+
+    .satellite-toggle {
+        padding: 6px 10px;
+        font-size: 0.72rem;
+    }
+
+    .satellite-toggle span {
+        display: none; /* Hide text on mobile */
     }
 
     .legend-topleft .legend-header {

@@ -180,7 +180,8 @@
             title: "Creek Through the Parks",
             zone: "suburban",
             flyTo: { center: [-111.035, 45.675], zoom: 13.5 },
-            layers: ['gallatin-streams', 'bozeman-parks', 'bozeman-city-limits'],
+            layers: ['gallatin-streams', 'bozeman-parks'],
+            highlightParks: true,
             content: `
                 <div class="zone-heading">
                     <div class="zone-icon" style="font-size: 32px;">🌳</div>
@@ -1253,6 +1254,52 @@
                 }
             });
         }
+
+        // Satellite toggle
+        const satelliteToggle = document.getElementById('satellite-toggle');
+        if (satelliteToggle) {
+            satelliteToggle.addEventListener('click', () => {
+                toggleSatellite();
+            });
+        }
+    }
+
+    // ================================================================
+    // SATELLITE TOGGLE
+    // ================================================================
+
+    let isSatellite = false;
+
+    function toggleSatellite() {
+        const btn = document.getElementById('satellite-toggle');
+        isSatellite = !isSatellite;
+
+        if (isSatellite) {
+            state.map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+            btn.classList.add('active');
+        } else {
+            state.map.setStyle(CONFIG.mapbox.style);
+            btn.classList.remove('active');
+        }
+
+        // Re-add layers after style change
+        state.map.once('style.load', () => {
+            // Re-add sources and layers
+            state.loadedSources.clear();
+            const currentLayers = new Set(state.activeLayers);
+            state.activeLayers.clear();
+
+            currentLayers.forEach(layerId => {
+                const config = getLayerConfig(layerId);
+                if (config) {
+                    addLayer(config.layer);
+                }
+            });
+
+            // Re-add Bozeman Creek highlight
+            addBozemanCreekHighlight();
+            updateLegend();
+        });
     }
 
 
@@ -1432,6 +1479,13 @@
         } else {
             clearTransectHighlight();
         }
+
+        // Highlight parks if specified
+        if (chapter.highlightParks) {
+            setTimeout(() => highlightParksLayer(), 500); // Delay to ensure layer is loaded
+        } else {
+            resetParksLayer();
+        }
     }
 
 
@@ -1453,8 +1507,9 @@
         },
         parks: {
             flyTo: { center: [-111.035, 45.675], zoom: 13.5 },
-            layers: ['gallatin-streams', 'bozeman-parks', 'bozeman-city-limits'],
-            label: 'Parks & Greenways — Creek Corridor'
+            layers: ['gallatin-streams', 'bozeman-parks'],
+            label: 'Parks & Greenways — Creek Corridor',
+            highlightParks: true  // Special flag to make parks extra bright
         },
         residential: {
             flyTo: { center: [-111.035, 45.67], zoom: 12.5 },
@@ -1508,6 +1563,13 @@
             setStoryLayers(config.layers);
         }
 
+        // Highlight parks if this is the parks zone
+        if (config.highlightParks) {
+            highlightParksLayer();
+        } else {
+            resetParksLayer();
+        }
+
         // Fly to location
         if (config.flyTo && state.map) {
             state.map.flyTo({
@@ -1518,6 +1580,41 @@
         }
     }
 
+    // Make parks layer extra bright and prominent
+    function highlightParksLayer() {
+        if (!state.map) return;
+
+        const parksLayerId = 'layer-bozeman-parks';
+        if (state.map.getLayer(parksLayerId)) {
+            state.map.setPaintProperty(parksLayerId, 'fill-color', '#4ade80');
+            state.map.setPaintProperty(parksLayerId, 'fill-opacity', 0.7);
+        }
+
+        const parksOutlineId = 'layer-bozeman-parks-outline';
+        if (state.map.getLayer(parksOutlineId)) {
+            state.map.setPaintProperty(parksOutlineId, 'line-color', '#16a34a');
+            state.map.setPaintProperty(parksOutlineId, 'line-width', 3);
+        }
+    }
+
+    // Reset parks layer to normal styling
+    function resetParksLayer() {
+        if (!state.map) return;
+
+        const parksLayerId = 'layer-bozeman-parks';
+        const config = getLayerConfig('bozeman-parks');
+        if (state.map.getLayer(parksLayerId) && config) {
+            state.map.setPaintProperty(parksLayerId, 'fill-color', config.layer.style['fill-color']);
+            state.map.setPaintProperty(parksLayerId, 'fill-opacity', config.layer.style['fill-opacity']);
+        }
+
+        const parksOutlineId = 'layer-bozeman-parks-outline';
+        if (state.map.getLayer(parksOutlineId) && config && config.layer.outlineStyle) {
+            state.map.setPaintProperty(parksOutlineId, 'line-color', config.layer.outlineStyle['line-color']);
+            state.map.setPaintProperty(parksOutlineId, 'line-width', config.layer.outlineStyle['line-width']);
+        }
+    }
+
     function deactivateZone() {
         activeZone = null;
 
@@ -1525,6 +1622,9 @@
         document.querySelectorAll('.zone-toggle-btn').forEach(btn => {
             btn.classList.remove('active');
         });
+
+        // Reset parks highlighting
+        resetParksLayer();
 
         // Reset to default view
         state.map.flyTo({
